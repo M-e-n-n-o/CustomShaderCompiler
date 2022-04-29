@@ -1,0 +1,68 @@
+// This file shows the possibilities of the ByteCat Shading Language (BCSL)
+
+Shader "Example.bcsl"
+{
+    #include "ByteCatStandard.bcsl"
+
+    uniform sampler2D tex;
+
+    iostream
+    {
+        input:
+        vec3 vertexPos;
+        vec2 texCoord;
+
+        v2f:
+        vec2 uv;
+
+        output:
+        vec4 fragColor;
+    }
+
+    vertex
+    {
+        uv = texCoord;
+        gl_Position = objectToClipSpace(vec4(vertexPos, 1.0));
+    }
+
+    fragment
+    {
+        fragColor = texture(tex, uv);
+    }
+}
+
+
+
+// Standard GLSL code
+    // Vertex shader
+    #version 450 core
+
+    layout (location = 0) in vec3 vertexPos;
+    layout (location = 1) in vec2 texCoord;
+
+    out vec2 uv;
+
+    uniform mat4 _modelMatrix;
+    uniform mat4 _viewMatrix;
+    uniform mat4 _projectionMatrix;
+
+    void main()
+    {
+        uv = texCoord;
+        gl_Position = _projectionMatrix * _viewMatrix * _modelMatrix * vec4(vertexPos, 1.0);
+    }
+
+
+    // Fragment shader
+    #version 450 core
+
+    in vec2 uv;
+
+    out vec4 fragColor;
+
+    uniform sampler2D tex;
+
+    void main()
+    {
+        fragColor = texture(tex, uv);
+    }
