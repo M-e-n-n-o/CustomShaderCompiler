@@ -1,0 +1,21 @@
+Haal alle enters uit de tekst
+
+Voor elk karakter:
+    Voeg deze toe aan een string a
+
+    Kijk of het einde van string a gelijk is aan een begin sequence (regex) van een klasse. Zo ja:
+        Je zit nu in een klasse
+        Voeg de klasse toe aan de achterkant van lijst b
+        Maak string a leeg
+        continue
+
+    Is lijst b leeg (Zit je in geen klassen)? Zo ja:
+        continue
+
+    Kijk of het einde van string a gelijk is aan de eind sequence (regex) van de laatste klasse waar je in zit. Zo ja:
+        Je bent nu uit de klasse
+        Verwijder deze laatste klasse uit de lijst b
+        Maak string a leeg
+        continue
+
+    Geef het karakter door aan de laatste klasse waar je in zit en laat die zn ding doen met het nieuwe karakter
