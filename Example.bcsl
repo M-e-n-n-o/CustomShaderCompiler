@@ -4,8 +4,6 @@ Shader "Example.bcsl"
 {
     #include "ByteCatStandard.bcsl"
 
-    uniform sampler2D tex;
-
     iostream
     {
         input:
@@ -18,6 +16,8 @@ Shader "Example.bcsl"
         output:
         vec4 fragColor;
     }
+
+    uniform sampler2D tex;
 
     vertex
     {
