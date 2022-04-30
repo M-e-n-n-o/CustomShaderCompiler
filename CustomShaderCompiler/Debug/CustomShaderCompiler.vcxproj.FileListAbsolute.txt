@@ -1,2 +1,0 @@
-C:\Users\Bil\Documents\School\CustomShaderCompiler\CustomShaderCompiler\Debug\CustomShaderCompiler.exe
-C:\Users\Bil\Documents\School\CustomShaderCompiler\CustomShaderCompiler\Debug\CustomShaderCompiler.pdb
