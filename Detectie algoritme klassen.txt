@@ -1,7 +1,11 @@
-Haal alle enters uit de tekst
+Maak voor elke regex sequence een eigen grammatica met zijn eigen state overgangen enzo 
+
 
 Voor elk karakter:
-    Voeg deze toe aan een string a
+    Is het karakter een enter of een spatie? Zo ja:
+        continue
+
+    Voeg het karakter toe aan een string a
 
     Kijk of het einde van string a gelijk is aan een begin sequence (regex) van een klasse. Zo ja:
         Je zit nu in een klasse
