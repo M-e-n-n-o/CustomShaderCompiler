@@ -23,13 +23,27 @@ bool isValid(State* currentState, const std::string& input)
 	{
 		return true;
 	}
-	
+
+	bool valid = false;
+	bool didTransition = false;
 	for (auto& transition : currentState->transitions)
 	{
 		if (transition.transitionCharacter == input[0])
 		{
-			return isValid(transition.to, input.substr(1));
+			if (didTransition)
+			{
+				std::cout << "The automata is not deterministic!" << std::endl;
+				return false;
+			}
+			
+			valid = isValid(transition.to, input.substr(1));
+			didTransition = true;
 		}
+	}
+
+	if (didTransition)
+	{
+		return valid;
 	}
 
 	return false;
@@ -37,7 +51,7 @@ bool isValid(State* currentState, const std::string& input)
 
 void automataTest()
 {
-	std::string regex = "b*a*b";
+	std::string regex = "b*b";
 
 	// Generate the states
 	std::vector<State> states;
@@ -124,7 +138,7 @@ void automataTest()
 	// }
 
 	// Validate
-	std::string input = "bab";
+	std::string input = "b";
 	bool valid = isValid(&states[0], input);
 	std::cout << "Regex: " << regex << ", input: " << input << ", is valid: " << valid << std::endl;
 }
