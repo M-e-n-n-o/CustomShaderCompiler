@@ -1,4 +1,4 @@
-#path "ByteCatStandard.bcsl"
+#shader "ByteCatStandard.bcsl"
 
 uniform mat4 _modelMatrix;
 uniform mat4 _viewMatrix;
@@ -6,8 +6,10 @@ uniform mat4 _projectionMatrix;
 
 uniform float _time;
 
-mat4 objectToClipSpace(vec4 pos)
+vertex
 {
-    return _projectionMatrix * _viewMatrix * _modelMatrix * pos;
+    mat4 objectToClipSpace(vec4 pos)
+    {
+        return _projectionMatrix * _viewMatrix * _modelMatrix * pos;
+    }
 }
-

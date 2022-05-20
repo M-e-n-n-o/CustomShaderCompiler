@@ -26,5 +26,11 @@
     <ClInclude Include="Regex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RegexTest.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AutomataTest.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

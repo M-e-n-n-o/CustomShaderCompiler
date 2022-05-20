@@ -143,7 +143,9 @@
     <ClCompile Include="Regex.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AutomataTest.h" />
     <ClInclude Include="Regex.h" />
+    <ClInclude Include="RegexTest.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

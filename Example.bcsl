@@ -20,13 +20,19 @@ uniform sampler2D tex;
 
 vertex
 {
-    uv = texCoord;
-    gl_Position = objectToClipSpace(vec4(vertexPos, 1.0));
+    void main()
+    {
+        uv = texCoord;
+        gl_Position = objectToClipSpace(vec4(vertexPos, 1.0));
+    }
 }
 
 fragment
 {
-    fragColor = texture(tex, uv);
+    void main()
+    {
+        fragColor = texture(tex, uv);
+    }
 }
 
 

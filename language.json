@@ -1,7 +1,9 @@
 {
-    "preprocessor": {
+    "preprocessor": 
+    {
         "symbol": "#",
-        "actions": [
+        "actions": 
+        [
             {
                 "keyword": "shader",
                 "valueType": "string"
@@ -12,15 +14,18 @@
             }
         ]
     },
-    "structures": [
+    "structures": 
+    [
         {
             "name": "class",
-            "start": ".+{",
+            "start": "[name]{",
             "end": "}",
-            "elaborations": [
+            "elaborations": 
+            [
                 {
                     "name": "iostream",
-                    "specials": [
+                    "specials": 
+                    [
                         "input:",
                         "v2f:",
                         "output"

@@ -1,5 +1,20 @@
-Maak voor elke regex sequence een eigen grammatica met zijn eigen state overgangen enzo 
+Regex naar DFA:
+    Maak een begin state aan
+    Elke letter in de regex wordt zijn eigen state (except speciale karakters (*, +, |))
+    Dan wordt een overgang gemaakt tussen elk van deze states (hierin worden de speciale karakters verwerkt)
+        Hierin kijk je eerst welk karakter heb ik nodig om naar de volgende plek in de regex te komen
+            Is het karakter een speciaal karakter? Zo ja:
+                Als dit een + is dan maak je een overgang naar de huidige state met het vorige overgang karakter
+                Als dit een * is dan maak je een overgang naar de huidige state met het vorige overgang karakter
+                    + dan maak je een overgang van de vorige state naar de volgende state met het volgende overgang karakter
+            
+            Maak een overgang tussen de huidige state en de volgende met het overgang karakter
 
+
+
+
+
+Maak voor elke regex sequence een eigen grammatica met zijn eigen state overgangen enzo 
 
 Voor elk karakter:
     Is het karakter een enter of een spatie? Zo ja:
