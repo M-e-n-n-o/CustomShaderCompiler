@@ -32,5 +32,11 @@
     <ClInclude Include="AutomataTest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Example.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RegexToDfa.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
