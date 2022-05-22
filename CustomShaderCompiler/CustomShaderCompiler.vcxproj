@@ -149,7 +149,7 @@
     <ClInclude Include="Example.h" />
     <ClInclude Include="Regex.h" />
     <ClInclude Include="RegexTest.h" />
-    <ClInclude Include="RegexToDfa.h" />
+    <ClInclude Include="RegexToNFA.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

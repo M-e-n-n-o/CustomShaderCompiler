@@ -35,7 +35,7 @@
     <ClInclude Include="Example.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RegexToDfa.h">
+    <ClInclude Include="RegexToNFA.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -49,11 +49,8 @@ bool isValid(State* currentState, const std::string& input)
 	return false;
 }
 
-void automataTest()
+std::vector<State> generateStates(const std::string& regex)
 {
-	std::string regex = "b*b";
-
-	// Generate the states
 	std::vector<State> states;
 	states.push_back({ 0, false });
 
@@ -79,10 +76,14 @@ void automataTest()
 		states.push_back({ id, isEnd });
 	}
 
-	// Generate the transitions
+	return states;
+}
+
+void addStateTransitions(const std::string& regex, std::vector<State>& states)
+{
 	int charNumber = 0;
 	for (int i = 0; i < states.size(); i++)
-	{		
+	{
 		State* currentState = &states[i];
 
 		State* nextState = nullptr;
@@ -90,7 +91,7 @@ void automataTest()
 		{
 			nextState = &states[i + 1];
 		}
-		
+
 		std::vector<Transition> transitions;
 		char nextChar = regex[charNumber];
 
@@ -99,43 +100,61 @@ void automataTest()
 			transitions.push_back({ currentState, regex[charNumber - 1], currentState });
 			nextChar = regex[charNumber + 1];
 			charNumber++;
-		} else if (nextChar == '*')
-		{			
+		}
+		else if (nextChar == '*')
+		{
 			transitions.push_back({ currentState, regex[charNumber - 1], currentState });
 			nextChar = regex[charNumber + 1];
 			charNumber++;
-			
+
 			State* previousState = &states[i - 1];
-			
+
 			if (nextState != nullptr)
 			{
-				previousState->transitions.push_back({ previousState, nextChar, nextState});
-			} else
+				previousState->transitions.push_back({ previousState, nextChar, nextState });
+			}
+			else
 			{
 				previousState->isEnd = true;
 			}
 		}
-		
+
 		if (nextState != nullptr)
 		{
 			transitions.push_back({ currentState, nextChar, nextState });
 		}
-		
+
 		currentState->transitions = transitions;
 		charNumber++;
 	}
+}
+
+void printStateTransitions(std::vector<State>& states)
+{
+	for (int i = 0; i < states.size(); i++)
+	{
+		State* currentState = &states[i];
+		std::cout << "State: " << currentState->id << ", is an end state: " << currentState->isEnd << std::endl;
+		for (int j = 0; j < currentState->transitions.size(); j++)
+		{
+			std::cout << currentState->transitions[j].from->id << "-" << currentState->transitions[j].transitionCharacter << "-> " << currentState->transitions[j].to->id << std::endl;
+		}
+		std::cout << std::endl;
+	}
+}
+
+void automataTest()
+{
+	std::string regex = "b*b";
+
+	// Generate the states
+	std::vector<State> states = generateStates(regex);
+
+	// Generate the transitions
+	addStateTransitions(regex, states);
 
 	// Print transitions
-	// for (int i = 0; i < states.size(); i++)
-	// {
-	// 	State* currentState = &states[i];
-	// 	std::cout << "State: " << currentState->id << ", is an end state: " << currentState->isEnd << std::endl;
-	// 	for (int j = 0; j < currentState->transitions.size(); j++)
-	// 	{
-	// 		std::cout << currentState->transitions[j].from->id << "-" << currentState->transitions[j].transitionCharacter << "-> " << currentState->transitions[j].to->id << std::endl;
-	// 	}
-	// 	std::cout << std::endl;
-	// }
+	printStateTransitions(states);
 
 	// Validate
 	std::string input = "b";
