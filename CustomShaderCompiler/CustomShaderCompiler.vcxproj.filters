@@ -15,17 +15,17 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Main.cpp">
+    <ClCompile Include="RegexOld.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Regex.cpp">
+    <ClCompile Include="relevant\Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="relevant\Regex.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Regex.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="RegexTest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -36,6 +36,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RegexToNFA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RegexOld.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="relevant\Automata.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="relevant\Transition.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="relevant\Regex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

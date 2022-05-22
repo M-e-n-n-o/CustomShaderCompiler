@@ -1,5 +1,5 @@
 #pragma once
-#include "Regex.h"
+#include "m_regex.h"
 #include <iostream>
 
 void printLanguage(Regex* regex)

@@ -141,15 +141,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Regex.cpp" />
+    <ClCompile Include="relevant\Main.cpp" />
+    <ClCompile Include="relevant\Regex.cpp" />
+    <ClCompile Include="RegexOld.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="relevant\Automata.h" />
     <ClInclude Include="AutomataTest.h" />
     <ClInclude Include="Example.h" />
-    <ClInclude Include="Regex.h" />
+    <ClInclude Include="relevant\Regex.h" />
+    <ClInclude Include="RegexOld.h" />
     <ClInclude Include="RegexTest.h" />
     <ClInclude Include="RegexToNFA.h" />
+    <ClInclude Include="relevant\Transition.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

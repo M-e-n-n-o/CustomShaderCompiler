@@ -110,12 +110,6 @@ string postfix(string s) {
     for (int i = 0; i < l; i++) {
         char x = s[i];
         switch (x) {
-        case 'a':   a[j] = 'a';
-            j += 1;
-            break;
-        case 'b':   a[j] = 'b';
-            j += 1;
-            break;
         case '(':   ch.push('(');
             break;
         case ')':   while (!ch.empty()) {
@@ -196,6 +190,12 @@ string postfix(string s) {
             }
         }
                 break;
+
+        default: {
+			a[j] = x;
+            j += 1;
+            break;
+	    }
         }
     }
     string p;
@@ -211,32 +211,14 @@ string postfix(string s) {
 */
 
 int reg_nfa(string s, int nfa_table[][col]) {
+    std::vector<char> characters;
+	
     int l = s.length();
     int states = 1;
     int m, n, j, counter;
     for (int i = 0; i < l; i++) {
         char x = s[i];
         switch (x) {
-        case 'a': nfa_table[states][0] = states;
-            init[a] = states;
-            a += 1;
-            states += 1;
-            nfa_table[states - 1][1] = states;
-            fin[b] = states;
-            b += 1;
-            nfa_table[states][0] = states;
-            states += 1;
-            break;
-        case 'b': nfa_table[states][0] = states;
-            init[a] = states;
-            a += 1;
-            states += 1;
-            nfa_table[states - 1][2] = states;
-            fin[b] = states;
-            b += 1;
-            nfa_table[states][0] = states;
-            states += 1;
-            break;
         case '.': m = fin[b - 2];
             n = init[a - 1];
             nfa_table[m][3] = n;
@@ -273,6 +255,28 @@ int reg_nfa(string s, int nfa_table[][col]) {
             nfa_table[n][4] = states;
             nfa_table[states - 1][4] = states;
             fin[b - 1] = states;
+            nfa_table[states][0] = states;
+            states += 1;
+            break;
+
+        default:
+            nfa_table[states][0] = states;
+            nfa_table[states][0] = states;
+            a += 1;
+            states += 1;
+
+            auto it = std::find(characters.begin(), characters.end(), x);
+            if (it == characters.end())
+            {
+                characters.push_back(x);
+                it = std::find(characters.begin(), characters.end(), x);
+            }
+
+            int index = std::distance(characters.begin(), it);
+            nfa_table[states - 1][index + 1] = states;
+
+            fin[b] = states;
+            b += 1;
             nfa_table[states][0] = states;
             states += 1;
             break;

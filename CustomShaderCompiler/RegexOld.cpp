@@ -1,7 +1,7 @@
-#include "Regex.h"
+#include "RegexOld.h"
 #include <iostream>
 
-Regex::Regex()
+RegexOld::RegexOld()
 {
 	m_operator = Operator::One;
 	m_terminals = "";
@@ -9,7 +9,7 @@ Regex::Regex()
 	m_right = nullptr;
 }
 
-Regex::Regex(const std::string& expression)
+RegexOld::RegexOld(const std::string& expression)
 {
 	m_operator = Operator::One;
 	m_terminals = expression;
@@ -17,48 +17,48 @@ Regex::Regex(const std::string& expression)
 	m_right = nullptr;
 }
 
-Regex* Regex::plus()
+RegexOld* RegexOld::plus()
 {
-	auto result = new Regex();
+	auto result = new RegexOld();
 	result->m_operator = Operator::Plus;
 	result->m_left = this;
 	
 	return result;
 }
 
-Regex* Regex::star()
+RegexOld* RegexOld::star()
 {
-	auto result = new Regex();
+	auto result = new RegexOld();
 	result->m_operator = Operator::Star;
 	result->m_left = this;
 	return result;
 }
 
-Regex* Regex::orr(Regex* other)
+RegexOld* RegexOld::orr(RegexOld* other)
 {
-	auto result = new Regex();
+	auto result = new RegexOld();
 	result->m_operator = Operator::Or;
 	result->m_left = this;
 	result->m_right = other;
 	return result;
 }
 
-Regex* Regex::dot(Regex* other)
+RegexOld* RegexOld::dot(RegexOld* other)
 {
-	auto result = new Regex();
+	auto result = new RegexOld();
 	result->m_operator = Operator::Dot;
 	result->m_left = this;
 	result->m_right = other;
 	return result;
 }
 
-bool Regex::isValid(const std::string& sequence, int maxSteps)
+bool RegexOld::isValid(const std::string& sequence, int maxSteps)
 {
 	auto language = getLanguage(maxSteps);
 	return std::find(language.begin(), language.end(), sequence) != language.end();
 }
 
-std::vector<std::string> Regex::getLanguage(int maxSteps)
+std::vector<std::string> RegexOld::getLanguage(int maxSteps)
 {
 	std::vector<std::string> emptyLanguage;
 	std::vector<std::string> languageResult;

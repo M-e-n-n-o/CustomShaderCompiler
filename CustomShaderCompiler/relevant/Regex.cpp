@@ -1,27 +1,12 @@
-﻿#pragma once
-#include <iostream>
-#include <string>
+#include "Regex.h"
 #include <stack>
-#include <vector>
 
-#define EPSILON 'ε'
-
-#define OPEN '('
-#define CLOSE ')'
-#define STAR '*'
-#define DOT '.'
-#define OR '|'
-
-enum class Symbol
+Regex::Regex(const std::string& regex)
 {
-	// Sorted on priority (Shunting yard algorithm)	
-	Star = 2,
-	Dot = 1,
-	Or = 0
-};
+	m_regex = postFix(regex);
+}
 
-
-bool isOperator(char c)
+bool Regex::isOperator(char c)
 {
 	switch (c)
 	{
@@ -34,7 +19,7 @@ bool isOperator(char c)
 	}
 }
 
-int getOperator(char c)
+int Regex::getOperatorPriority(char c)
 {
 	switch (c)
 	{
@@ -45,7 +30,7 @@ int getOperator(char c)
 	}
 }
 
-std::string postfix(const std::string& regex)
+std::string Regex::postFix(const std::string& regex)
 {
 	std::string output;
 	std::stack<char> operatorStack;
@@ -80,7 +65,7 @@ std::string postfix(const std::string& regex)
 		}
 		else
 		{
-			int o = getOperator(c);
+			int o = getOperatorPriority(c);
 			while (!operatorStack.empty())
 			{
 				char top = operatorStack.top();
@@ -111,20 +96,4 @@ std::string postfix(const std::string& regex)
 	}
 
 	return output;
-}
-
-
-void postfixToNFA(const std::string& regex)
-{
-	// Java code gebruiken van Hans
-}
-
-void regexToNFATest()
-{
-	std::string regex = "a.(a|b)*.b";
-	std::string convertex = postfix(regex);
-
-	std::cout << "Converted regex:\t" << regex << "\nTo postfix:\t\t" << convertex << std::endl;
-
-	postfixToNFA(regex);
 }

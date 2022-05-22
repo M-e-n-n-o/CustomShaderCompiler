@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 
-class Regex
+class RegexOld
 {
 private:
 	enum class Operator
@@ -14,20 +14,20 @@ private:
 		Dot
 	};
 
-	Regex* m_left;
-	Regex* m_right;
+	RegexOld* m_left;
+	RegexOld* m_right;
 
 	Operator m_operator;
 	std::string m_terminals;
 
 public:
-	Regex();
-	Regex(const std::string& expression);
+	RegexOld();
+	RegexOld(const std::string& expression);
 
-	Regex* plus();
-	Regex* star();
-	Regex* orr(Regex* other);
-	Regex* dot(Regex* other);
+	RegexOld* plus();
+	RegexOld* star();
+	RegexOld* orr(RegexOld* other);
+	RegexOld* dot(RegexOld* other);
 
 	bool isValid(const std::string& sequence, int maxSteps);
 	std::vector<std::string> getLanguage(int maxSteps);
