@@ -121,5 +121,8 @@ void Automata<T>::printTransitions()
 template <typename T>
 Automata<T>::Automata(const std::string& regex)
 {
+	// TODO: Genereer een automaat en taal met de regex
+	// https://medium.com/swlh/visualizing-thompsons-construction-algorithm-for-nfas-step-by-step-f92ef378581b
 
+	// Maak vervolgens een methode om de automaat om te zetten in een DFA
 }
