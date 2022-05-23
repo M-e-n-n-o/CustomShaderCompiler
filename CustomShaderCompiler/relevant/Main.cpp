@@ -8,23 +8,22 @@ int main()
 
 	Regex regex("a.(a|b)*.b");
 
-	Automata m(regex);
-	m.printTransitions();
+	Automata m = AutomataBuilder().construct();
 	
-	// Automata<std::string> m;
+	// Automata m;
 	// m.setAlphabet({'a', 'b'});
 	//
-	// m.addTransition({"q0", 'a', "q1"});	
-	// m.addTransition({"q0", 'b', "q4"});
-	// m.addTransition({"q1", 'a', "q4"});
-	// m.addTransition({"q1", 'b', "q2"});
-	// m.addTransition({"q2", 'a', "q3"});
-	// m.addTransition({"q2", 'b', "q4"});
-	// m.addTransition({"q3", 'a', "q1"});
-	// m.addTransition({"q3", 'b', "q2"});
+	// m.addTransition("q0", 'a', "q1");	
+	// m.addTransition("q0", 'b', "q4");
+	// m.addTransition("q1", 'a', "q4");
+	// m.addTransition("q1", 'b', "q2");
+	// m.addTransition("q2", 'a', "q3");
+	// m.addTransition("q2", 'b', "q4");
+	// m.addTransition("q3", 'a', "q1");
+	// m.addTransition("q3", 'b', "q2");
 	//
-	// m.addTransition({ "q4", 'a' });
-	// m.addTransition({ "q4", 'b' });
+	// m.addTransition("q4", 'a');
+	// m.addTransition("q4", 'b');
 	//
 	// m.addStartState("q0");
 	//

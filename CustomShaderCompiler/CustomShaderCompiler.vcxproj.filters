@@ -47,10 +47,10 @@
     <ClInclude Include="relevant\Automata.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="relevant\Transition.h">
+    <ClInclude Include="relevant\Regex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="relevant\Regex.h">
+    <ClInclude Include="relevant\State.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

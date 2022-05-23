@@ -2,72 +2,61 @@
 #include <set>
 #include <iostream>
 #include <stack>
-#include "Transition.h"
+#include <memory>
+#include "State.h"
 #include "Regex.h"
 
 class Automata
 {
 private:
-	std::set<std::string> m_states;
-	std::set<std::string> m_startStates;
-	std::set<std::string> m_finalStates;
+	std::set<std::shared_ptr<State>> m_states;
+	std::shared_ptr<State> m_startState;
+	std::shared_ptr<State> m_finalState;
 	std::set<char> m_symbols;
-	std::set<Transition> m_transitions;
 
 public:
 	Automata() = default;
-	Automata(const std::set<std::string>& states, const std::set<std::string>& startStates, const std::set<std::string>& finalStates, const std::set<char>& symbols, const std::set<Transition>& transitions)
-		: m_states(states), m_startStates(startStates), m_finalStates(finalStates), m_symbols(symbols), m_transitions(transitions) {}
+	Automata(const std::set<std::shared_ptr<State>>& states, const std::shared_ptr<State>& startState, const std::shared_ptr<State>& finalState, const std::set<char>& symbols);
+
 	~Automata() = default;
+
+	void addState(std::shared_ptr<State>& state);
+	void addStates(std::set<std::shared_ptr<State>>& states);
+	void setStartState(std::shared_ptr<State>& state);
+	void setFinalState(std::shared_ptr<State>& state);
+	void addSymbol(char symbol);
+	void addSymbols(std::set<char>& symbols);
+
+	std::set<std::shared_ptr<State>>& getStates() { return m_states; }
+	std::shared_ptr<State>& getStartState() { return m_startState; }
+	std::shared_ptr<State>& getFinalState() { return m_finalState; }
+	std::set<char>& getSymbols() { return m_symbols; }
 	
-	void setAlphabet(const std::set<char>& symbols)
-	{
-		m_symbols = symbols;
-	}
-
-	void addTransition(const Transition& t)
-	{
-		m_transitions.insert(t);
-		m_states.insert(t.getFromState());
-		m_states.insert(t.getToState());
-	}
-
-	void addStartState(const std::string& t)
-	{
-		m_states.insert(t);
-		m_startStates.insert(t);
-	}
-
-	void addFinalState(const std::string& t)
-	{
-		m_states.insert(t);
-		m_finalStates.insert(t);
-	}
-
-	bool validate(const std::string& start, const std::string& input);
+	bool validate(const std::string& input);
 
 	void printTransitions();
 
-	class Builder
-	{
-	private:
-		std::set<std::string> m_states;
-		std::set<std::string> m_startStates;
-		std::set<std::string> m_finalStates;
-		std::set<char> m_symbols;
-		std::set<Transition> m_transitions;
+private:
+	bool validate(const std::shared_ptr<State>& start, const std::string& input);
+};
 
-		std::stack<Transition> m_transitionStack;
-	
-	public:
-		Builder() = default;
-		~Builder() = default;
+class AutomataBuilder
+{
+private:
+	int m_stateCount = 0;
 
-		Builder& addSymbol(char a);
-		Builder& addUnion();
-		Builder& addConcatenation();
-		Builder& addClosure();
+	std::set<char> m_symbols;
 
-		Automata construct();
-	};
+	std::stack<Automata> m_automatas;
+
+public:
+	AutomataBuilder() = default;
+	~AutomataBuilder() = default;
+
+	AutomataBuilder& addSymbol(char symbol);
+	AutomataBuilder& addUnion();
+	AutomataBuilder& addConcatenation();
+	AutomataBuilder& addClosure();
+
+	Automata construct();
 };
