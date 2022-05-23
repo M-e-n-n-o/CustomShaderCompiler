@@ -146,12 +146,12 @@ AutomataBuilder& AutomataBuilder::addUnion()
 }
 
 AutomataBuilder& AutomataBuilder::addConcatenation()
-{
+{	
 	return *this;
 }
 
 AutomataBuilder& AutomataBuilder::addClosure()
-{
+{	
 	return *this;
 }
 
@@ -159,3 +159,6 @@ Automata AutomataBuilder::construct()
 {
 	return Automata();
 }
+
+// TODO Deze methodes afmaken + een methode maken om de NFA om te zetten naar een DFA
+// https://medium.com/swlh/visualizing-thompsons-construction-algorithm-for-nfas-step-by-step-f92ef378581b
