@@ -1,128 +1,73 @@
 #pragma once
 #include <set>
 #include <iostream>
-#include <vector>
+#include <stack>
 #include "Transition.h"
+#include "Regex.h"
 
-template<typename T>
 class Automata
 {
 private:
-	std::set<T> m_states;
-	std::set<T> m_startStates;
-	std::set<T> m_finalStates;
-	std::vector<char> m_symbols;
-	std::set<Transition<T>> m_transitions;
+	std::set<std::string> m_states;
+	std::set<std::string> m_startStates;
+	std::set<std::string> m_finalStates;
+	std::set<char> m_symbols;
+	std::set<Transition> m_transitions;
 
 public:
 	Automata() = default;
-	Automata(const std::string& regex);
-
-	void setAlphabet(const std::initializer_list<char>& symbols)
+	Automata(const std::set<std::string>& states, const std::set<std::string>& startStates, const std::set<std::string>& finalStates, const std::set<char>& symbols, const std::set<Transition>& transitions)
+		: m_states(states), m_startStates(startStates), m_finalStates(finalStates), m_symbols(symbols), m_transitions(transitions) {}
+	~Automata() = default;
+	
+	void setAlphabet(const std::set<char>& symbols)
 	{
 		m_symbols = symbols;
 	}
 
-	void addTransition(const Transition<T>& t)
+	void addTransition(const Transition& t)
 	{
 		m_transitions.insert(t);
 		m_states.insert(t.getFromState());
 		m_states.insert(t.getToState());
 	}
 
-	void addStartState(const T& t)
+	void addStartState(const std::string& t)
 	{
 		m_states.insert(t);
 		m_startStates.insert(t);
 	}
 
-	void addFinalState(const T& t)
+	void addFinalState(const std::string& t)
 	{
 		m_states.insert(t);
 		m_finalStates.insert(t);
 	}
 
-	bool isDeterministic();
-
-	bool validate(const T& start, const std::string& input);
+	bool validate(const std::string& start, const std::string& input);
 
 	void printTransitions();
-};
 
-template <typename T>
-bool Automata<T>::isDeterministic()
-{
-	bool isDFA = true;
-
-	for (const T& from : m_states)
+	class Builder
 	{
-		for (const char& symbol : m_symbols)
-		{
-			isDFA = isDFA && getToStates(from, symbol).size() == 1;
-		}
-	}
+	private:
+		std::set<std::string> m_states;
+		std::set<std::string> m_startStates;
+		std::set<std::string> m_finalStates;
+		std::set<char> m_symbols;
+		std::set<Transition> m_transitions;
 
-	return isDFA;
-}
-
-template <typename T>
-bool Automata<T>::validate(const T& start, const std::string& input)
-{	
-	if (std::find(m_finalStates.begin(), m_finalStates.end(), start) != m_finalStates.end() && input.empty())
-	{
-		return true;
-	}
-
-	// std::cout << "Current state: " + start << ", input: " << input << std::endl;
+		std::stack<Transition> m_transitionStack;
 	
-	bool isValid = false;
-	bool didTransition = false;
-	for (const auto& t : m_transitions)
-	{
-		if (t.getFromState() != start)
-		{
-			continue;
-		}
+	public:
+		Builder() = default;
+		~Builder() = default;
 
-		// std::cout << "Possible transition with: " << t.getSymbol() << ", to: " << t.getToState() << std::endl;
+		Builder& addSymbol(char a);
+		Builder& addUnion();
+		Builder& addConcatenation();
+		Builder& addClosure();
 
-		if (t.getSymbol() == input[0])
-		{
-			// std::cout << "Transition!" << std::endl;
-			
-			if (didTransition)
-			{
-				std::cout << "Can only check validation of deterministic automata!" << std::endl;
-				return false;
-			}
-
-			isValid = validate(t.getToState(), input.substr(1));
-			didTransition = true;
-		}
-	}
-
-	if (didTransition)
-	{
-		return isValid;
-	}
-
-	return false;
-}
-
-template <typename T>
-void Automata<T>::printTransitions()
-{
-	for (const Transition<T>& t : m_transitions)
-	{
-		std::cout << t.toString() << std::endl;
-	}
-}
-
-template <typename T>
-Automata<T>::Automata(const std::string& regex)
-{
-	// TODO: Genereer een automaat en taal met de regex
-	// https://medium.com/swlh/visualizing-thompsons-construction-algorithm-for-nfas-step-by-step-f92ef378581b
-
-	// Maak vervolgens een methode om de automaat om te zetten in een DFA
-}
+		Automata construct();
+	};
+};

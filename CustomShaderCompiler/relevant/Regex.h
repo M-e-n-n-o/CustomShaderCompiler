@@ -18,6 +18,8 @@ public:
 
 	enum class Symbol
 	{
+		None = -1,
+		
 		// Sorted on priority (Shunting yard algorithm)	
 		Star = 2,
 		Dot = 1,
@@ -26,11 +28,11 @@ public:
 
 	const std::string& getRegex() const { return m_regex; }
 
-private:
-	static bool isOperator(char c);
+	static bool IsOperator(char c);
 	
 	// Result can be casted to the Symbol
-	static int getOperatorPriority(char c);
-	
+	static Symbol GetOperator(char c);
+
+private:
 	static std::string postFix(const std::string& regex);
 };

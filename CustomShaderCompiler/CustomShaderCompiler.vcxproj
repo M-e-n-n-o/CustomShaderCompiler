@@ -141,6 +141,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="relevant\Automata.cpp" />
     <ClCompile Include="relevant\Main.cpp" />
     <ClCompile Include="relevant\Regex.cpp" />
     <ClCompile Include="RegexOld.cpp" />

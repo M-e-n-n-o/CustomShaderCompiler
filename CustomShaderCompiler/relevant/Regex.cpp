@@ -6,7 +6,7 @@ Regex::Regex(const std::string& regex)
 	m_regex = postFix(regex);
 }
 
-bool Regex::isOperator(char c)
+bool Regex::IsOperator(char c)
 {
 	switch (c)
 	{
@@ -19,14 +19,14 @@ bool Regex::isOperator(char c)
 	}
 }
 
-int Regex::getOperatorPriority(char c)
+Regex::Symbol Regex::GetOperator(char c)
 {
 	switch (c)
 	{
-	case STAR:	return (int) Symbol::Star;
-	case DOT:	return (int) Symbol::Dot;
-	case OR:	return (int) Symbol::Or;
-	default:	return -1;
+	case STAR:	return Symbol::Star;
+	case DOT:	return Symbol::Dot;
+	case OR:	return Symbol::Or;
+	default:	return Symbol::None;
 	}
 }
 
@@ -37,7 +37,7 @@ std::string Regex::postFix(const std::string& regex)
 
 	for (const char& c : regex)
 	{
-		if (!isOperator(c))
+		if (!IsOperator(c))
 		{
 			output += c;
 			continue;
@@ -65,7 +65,7 @@ std::string Regex::postFix(const std::string& regex)
 		}
 		else
 		{
-			int o = getOperatorPriority(c);
+			int o = (int) GetOperator(c);
 			while (!operatorStack.empty())
 			{
 				char top = operatorStack.top();
