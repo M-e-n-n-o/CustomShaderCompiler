@@ -1,10 +1,11 @@
 #include "Automata.h"
+#include <iostream>
 
 Automata::Automata(const std::set<std::shared_ptr<State>>& states, const std::shared_ptr<State>& startState,
-	const std::shared_ptr<State>& finalState, const std::set<char>& symbols) : m_states(m_states),
+	const std::shared_ptr<State>& finalState, const std::set<char>& alfabet) : m_states(m_states),
 	m_startState(startState),
 	m_finalState(finalState),
-	m_symbols(m_symbols) {}
+	m_alfabet(m_alfabet) {}
 
 void Automata::addState(std::shared_ptr<State>& state)
 {
@@ -30,12 +31,20 @@ void Automata::setFinalState(std::shared_ptr<State>& state)
 
 void Automata::addSymbol(char symbol)
 {
-	m_symbols.insert(symbol);
+	m_alfabet.insert(symbol);
 }
 
 void Automata::addSymbols(std::set<char>& symbols)
 {
-	m_symbols.insert(symbols.begin(), symbols.end());
+	m_alfabet.insert(symbols.begin(), symbols.end());
+}
+
+void Automata::printTransitions()
+{
+	for (auto& state : m_states)
+	{
+		std::cout << state->toString() << std::endl;
+	}
 }
 
 bool Automata::validate(const std::string& input)
@@ -50,21 +59,21 @@ bool Automata::validate(const std::shared_ptr<State>& start, const std::string& 
 		return true;
 	}
 
-	// std::cout << "Current state: " + start << ", input: " << input << std::endl;
-
 	bool isValid = false;
 	bool didTransition = false;
 	for (auto& transition : start->transitions)
 	{
-		// std::cout << "Possible transition with: " << t.getSymbol() << ", to: " << t.getToState() << std::endl;
-
+		if (transition->symbol == EPSILON)
+		{
+			std::cerr << "Automata cannot contain any epsilons!" << std::endl;
+			return false;
+		}
+		
 		if (transition->symbol == input[0])
 		{
-			// std::cout << "Transition!" << std::endl;
-
 			if (didTransition)
 			{
-				std::cout << "Can only check validation of deterministic automata!" << std::endl;
+				std::cerr << "Can only check validation of deterministic automata!" << std::endl;
 				return false;
 			}
 
@@ -81,12 +90,145 @@ bool Automata::validate(const std::shared_ptr<State>& start, const std::string& 
 	return false;
 }
 
-void Automata::printTransitions()
+void Automata::makeDeterministic()
 {
-	for (auto& state : m_states)
+	auto errorState = std::make_shared<State>("Error");
+	for (auto& symbol : m_alfabet)
 	{
-		std::cout << state->toString() << std::endl;
+		auto transition = std::make_shared<Transition>(errorState, symbol);
+		errorState->transitions.push_back(transition);
 	}
+	
+	std::set<std::shared_ptr<State>> newStates;
+
+	newStates.insert(m_startState);
+	
+	while (true)
+	{
+		bool done = true;
+		std::vector<std::shared_ptr<State>> toAdd;
+		
+		for (auto& state : newStates)
+		{			
+			if (!state->isDeterministic(m_alfabet))
+			{
+				auto states = makeDeterministic(state, errorState);
+				toAdd.insert(toAdd.end(), states.begin(), states.end());
+				
+				done = false;
+			}
+		}
+
+		for (auto& state : toAdd)
+		{
+			auto pair = newStates.insert(state);
+			if (!pair.second)
+			{
+				auto& transitions = (*pair.first)->transitions;
+				for (int i = 0; i < transitions.size(); i++)
+				{
+					auto& transitionOld = transitions[i];
+					
+					for (auto& transitionNew : state->transitions)
+					{
+						if (transitionOld->symbol != transitionNew->symbol)
+						{
+							transitions.push_back(transitionNew);
+						}
+					}
+				}
+			}
+		}
+
+		// std::cout << "Amount of new states: " << newStates.size() << std::endl;
+		
+		if (done)
+		{
+			break;
+		}
+	}
+
+	// TODO
+	// Bugs fixen,
+	// Eind states bepalen (https://www.youtube.com/watch?v=jMxuL4Xzi_A),
+	// Alle states goed in de automaat zetten
+}
+
+std::vector<std::shared_ptr<State>> Automata::makeDeterministic(const std::shared_ptr<State>& start, const std::shared_ptr<State>& error)
+{
+	std::set<std::shared_ptr<State>> startStates;
+	startStates.insert(start);
+	for (auto& transition : start->transitions)
+	{
+		if (transition->symbol == EPSILON)
+		{			
+			startStates.insert(transition->to);
+		}
+	}
+
+	std::string stateName;
+	for (auto& state : startStates)
+	{
+		stateName += state->name + ", ";
+	}
+	auto startState = std::make_shared<State>(stateName);
+
+	std::vector<std::pair<char, std::set<std::shared_ptr<State>>>> possibleNextStates;
+	for (auto& symbol : m_alfabet)
+	{
+		auto statesPerSymbol = std::make_pair(symbol, std::set<std::shared_ptr<State>>());
+
+		for (auto& state : startStates)
+		{
+			for (auto& transition : state->transitions)
+			{
+				if (transition->symbol == symbol)
+				{
+					statesPerSymbol.second.insert(transition->to);
+				}
+			}
+		}
+
+		for (auto& state : statesPerSymbol.second)
+		{
+			for (auto& transition : state->transitions)
+			{
+				if (transition->symbol == EPSILON)
+				{
+					statesPerSymbol.second.insert(transition->to);
+				}
+			}
+		}
+
+		possibleNextStates.push_back(statesPerSymbol);
+	}
+
+	std::vector<std::shared_ptr<State>> states;
+	states.push_back(startState);
+
+	for (auto& statesPerSymbol : possibleNextStates)
+	{
+		if (statesPerSymbol.second.empty())
+		{
+			auto transition = std::make_shared<Transition>(startState, statesPerSymbol.first, error);
+			startState->transitions.push_back(transition);
+			continue;
+		}
+
+		std::string stateName;
+		for (auto& state : statesPerSymbol.second)
+		{
+			stateName += state->name + ", ";
+		}
+
+		auto nextState = std::make_shared<State>(stateName);
+		auto transition = std::make_shared<Transition>(startState, statesPerSymbol.first, nextState);
+		startState->transitions.push_back(transition);
+
+		states.push_back(nextState);
+	}
+
+	return states;
 }
 
 
@@ -96,9 +238,8 @@ void Automata::printTransitions()
 
 AutomataBuilder::AutomataBuilder(Regex& regex)
 {
-	
 	for (auto& c : regex.getRegex())
-	{		
+	{
 		if (!Regex::IsOperator(c))
 		{
 			addSymbol(c);
@@ -110,7 +251,7 @@ AutomataBuilder::AutomataBuilder(Regex& regex)
 			case Regex::Symbol::Dot:	addConcatenation(); break;
 			case Regex::Symbol::Or:		addUnion(); break;
 			case Regex::Symbol::None:	
-			default: std::cout << "Operator not supported!" << std::endl;
+			default: std::cerr << "Operator not supported!" << std::endl;
 			}
 		}
 	}
@@ -160,8 +301,8 @@ AutomataBuilder& AutomataBuilder::addUnion()
 	a.addStates(top.getStates());
 	a.addStates(second.getStates());
 	a.setFinalState(end);
-	a.addSymbols(top.getSymbols());
-	a.addSymbols(second.getSymbols());
+	a.addSymbols(top.getAlfabet());
+	a.addSymbols(second.getAlfabet());
 	m_automatas.push(a);
 	
 	return *this;
@@ -199,8 +340,8 @@ AutomataBuilder& AutomataBuilder::addConcatenation()
 	a.addStates(top.getStates());
 	a.addStates(second.getStates());
 	a.setFinalState(top.getFinalState());
-	a.addSymbols(top.getSymbols());
-	a.addSymbols(second.getSymbols());
+	a.addSymbols(top.getAlfabet());
+	a.addSymbols(second.getAlfabet());
 	m_automatas.push(a);
 	
 	return *this;
@@ -228,7 +369,7 @@ AutomataBuilder& AutomataBuilder::addClosure()
 	a.setStartState(start);
 	a.addStates(top.getStates());
 	a.setFinalState(end);
-	a.addSymbols(top.getSymbols());
+	a.addSymbols(top.getAlfabet());
 	m_automatas.push(a);
 	
 	return *this;
@@ -238,7 +379,7 @@ Automata AutomataBuilder::construct()
 {
 	if (m_automatas.size() > 1 || m_automatas.empty())
 	{
-		std::cout << "Could not construct an Automata" << std::endl;
+		std::cerr << "Could not construct an Automata" << std::endl;
 		return Automata();
 	}
 	

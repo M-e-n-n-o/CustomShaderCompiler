@@ -616,8 +616,6 @@ int nfa_dfa(int nfa_table[][col], int states, string dfa_tab[][3]) {
     print_dfa_table(dfa_tab, state);     //function to print dfa table
 
     return state;
-
-
 }
 
 void simulator(string dfa_tab[][3], string word, int state) {

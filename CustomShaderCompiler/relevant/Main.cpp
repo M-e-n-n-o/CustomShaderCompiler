@@ -1,3 +1,4 @@
+#include <iostream>
 #include "Automata.h"
 #include "Regex.h"
 
@@ -25,7 +26,12 @@ int main()
 	Regex regex("a.(a|b)*.b");
 	std::cout << regex.getRegex() << std::endl;
 	Automata m = AutomataBuilder(regex).construct();
-	m.printTransitions();
+	// m.printTransitions();
+
+	m.makeDeterministic();
+	
+	bool isValid = m.validate("aab");
+	std::cout << isValid << std::endl;
 	
 	// Automata m;
 	// m.setAlphabet({'a', 'b'});

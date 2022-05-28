@@ -3,6 +3,8 @@
 #include <vector>
 #include <memory>
 
+#include <iostream>
+
 #define EPSILON '$'
 
 class State;
@@ -32,6 +34,35 @@ public:
 	{
 		std::hash<std::string> hasher;
 		hash = hasher(name);
+	}
+
+	bool isDeterministic(const std::set<char>& alfabet)
+	{
+		for (auto& c : alfabet)
+		{			
+			bool contains = false;
+			
+			for (const auto& transition : transitions)
+			{
+				if (transition->symbol == c)
+				{
+					contains = true;
+					break;
+				}
+
+				if (transition->symbol == EPSILON)
+				{
+					return false;
+				}
+			}
+
+			if (!contains)
+			{
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	friend bool operator<(const State& l, const State& r)
