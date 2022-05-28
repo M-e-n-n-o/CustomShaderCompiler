@@ -28,12 +28,12 @@ public:
 	std::string name;
 	std::vector<std::shared_ptr<Transition>> transitions;
 
-	State(const std::string& name): name(name)
+	State(const std::string& name) : name(name)
 	{
 		std::hash<std::string> hasher;
 		hash = hasher(name);
 	}
-	
+
 	friend bool operator<(const State& l, const State& r)
 	{
 		return l.hash < r.hash;
@@ -44,9 +44,9 @@ public:
 		std::string s;
 		for (auto& transition : transitions)
 		{
-			s += name + "\t+\t" + transition->symbol + "\t-->\t" + transition->to->name;
+			s += name + "\t-- " + transition->symbol + " -->\t" + transition->to->name + "\n";
 		}
-
+	
 		return s;
 	}
 };

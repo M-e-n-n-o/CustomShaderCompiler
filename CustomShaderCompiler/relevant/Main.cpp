@@ -4,11 +4,29 @@
 
 int main()
 {
-	// regexToNFATest();
+	// Automata m = AutomataBuilder()
+	// 	.addSymbol('a')
+	// 	.addSymbol('b')
+	// 	.addConcatenation()
+	// 	.construct();
+
+	// Automata m = AutomataBuilder()
+	// 	.addSymbol('a')
+	// 	.addClosure()
+	// 	.construct();
+
+	// Automata m = AutomataBuilder()
+	// 	.addSymbol('a')
+	// 	.addSymbol('b')
+	// 	.addUnion()
+	// 	.construct();
+	
+	// m.printTransitions();
 
 	Regex regex("a.(a|b)*.b");
-
-	Automata m = AutomataBuilder().construct();
+	std::cout << regex.getRegex() << std::endl;
+	Automata m = AutomataBuilder(regex).construct();
+	m.printTransitions();
 	
 	// Automata m;
 	// m.setAlphabet({'a', 'b'});

@@ -94,6 +94,28 @@ void Automata::printTransitions()
 //									BUILDER
 // --------------------------------------------------------------------------
 
+AutomataBuilder::AutomataBuilder(Regex& regex)
+{
+	
+	for (auto& c : regex.getRegex())
+	{		
+		if (!Regex::IsOperator(c))
+		{
+			addSymbol(c);
+		} else
+		{
+			switch (Regex::GetOperator(c))
+			{
+			case Regex::Symbol::Star:	addClosure(); break;
+			case Regex::Symbol::Dot:	addConcatenation(); break;
+			case Regex::Symbol::Or:		addUnion(); break;
+			case Regex::Symbol::None:	
+			default: std::cout << "Operator not supported!" << std::endl;
+			}
+		}
+	}
+}
+
 AutomataBuilder& AutomataBuilder::addSymbol(char symbol)
 {
 	m_symbols.insert(symbol);
@@ -114,11 +136,11 @@ AutomataBuilder& AutomataBuilder::addSymbol(char symbol)
 }
 
 AutomataBuilder& AutomataBuilder::addUnion()
-{
-	Automata& top = m_automatas.top();
+{	
+	Automata top = m_automatas.top();
 	m_automatas.pop();
 
-	Automata& second = m_automatas.top();
+	Automata second = m_automatas.top();
 	m_automatas.pop();
 
 	auto start = std::make_shared<State>(std::to_string(m_stateCount++));
@@ -132,7 +154,7 @@ AutomataBuilder& AutomataBuilder::addUnion()
 	auto tEnd2 = std::make_shared<Transition>(second.getFinalState(), end);
 	top.getFinalState()->transitions.push_back(tEnd1);
 	second.getFinalState()->transitions.push_back(tEnd2);
-
+	
 	Automata a;
 	a.setStartState(start);
 	a.addStates(top.getStates());
@@ -146,18 +168,75 @@ AutomataBuilder& AutomataBuilder::addUnion()
 }
 
 AutomataBuilder& AutomataBuilder::addConcatenation()
-{	
+{
+	Automata top = m_automatas.top();
+	m_automatas.pop();
+
+	Automata second = m_automatas.top();
+	m_automatas.pop();
+
+	for (auto& state : second.getStates())
+	{
+		if (state == second.getFinalState())
+		{
+			continue;
+		}
+
+		for (auto& transition : state->transitions)
+		{
+			if (transition->to == second.getFinalState())
+			{
+				transition->to = top.getStartState();
+			}
+		}
+	}
+
+	const auto& it = std::find(second.getStates().begin(), second.getStates().end(), second.getFinalState());
+	second.getStates().erase(it);
+	
+	Automata a;
+	a.setStartState(second.getStartState());
+	a.addStates(top.getStates());
+	a.addStates(second.getStates());
+	a.setFinalState(top.getFinalState());
+	a.addSymbols(top.getSymbols());
+	a.addSymbols(second.getSymbols());
+	m_automatas.push(a);
+	
 	return *this;
 }
 
 AutomataBuilder& AutomataBuilder::addClosure()
-{	
+{
+	Automata top = m_automatas.top();
+	m_automatas.pop();
+
+	auto end = std::make_shared<State>(std::to_string(m_stateCount++));
+	auto tEnd1 = std::make_shared<Transition>(top.getFinalState(), end);
+	top.getFinalState()->transitions.push_back(tEnd1);
+	
+	auto tRepeat = std::make_shared<Transition>(top.getFinalState(), top.getStartState());
+	top.getFinalState()->transitions.push_back(tRepeat);
+	
+	auto start = std::make_shared<State>(std::to_string(m_stateCount++));
+	auto tStart1 = std::make_shared<Transition>(start, top.getStartState());
+	auto tStart2 = std::make_shared<Transition>(start, end);
+	start->transitions.push_back(tStart1);
+	start->transitions.push_back(tStart2);
+
+	Automata a;
+	a.setStartState(start);
+	a.addStates(top.getStates());
+	a.setFinalState(end);
+	a.addSymbols(top.getSymbols());
+	m_automatas.push(a);
+	
 	return *this;
 }
 
 Automata AutomataBuilder::construct()
 {
-	return Automata();
+	return m_automatas.top();
 }
 
 // TODO Deze methodes afmaken + een methode maken om de NFA om te zetten naar een DFA

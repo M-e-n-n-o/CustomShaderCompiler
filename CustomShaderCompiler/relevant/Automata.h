@@ -27,7 +27,7 @@ public:
 	void addSymbol(char symbol);
 	void addSymbols(std::set<char>& symbols);
 
-	std::set<std::shared_ptr<State>>& getStates() { return m_states; }
+	std::set<std::shared_ptr<State>>& getStates() {	return m_states; }
 	std::shared_ptr<State>& getStartState() { return m_startState; }
 	std::shared_ptr<State>& getFinalState() { return m_finalState; }
 	std::set<char>& getSymbols() { return m_symbols; }
@@ -51,6 +51,7 @@ private:
 
 public:
 	AutomataBuilder() = default;
+	AutomataBuilder(Regex& regex);
 	~AutomataBuilder() = default;
 
 	AutomataBuilder& addSymbol(char symbol);

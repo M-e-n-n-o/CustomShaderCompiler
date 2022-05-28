@@ -1,4 +1,6 @@
 #include "Regex.h"
+
+#include <iostream>
 #include <stack>
 
 Regex::Regex(const std::string& regex)
@@ -36,7 +38,7 @@ std::string Regex::postFix(const std::string& regex)
 	std::stack<char> operatorStack;
 
 	for (const char& c : regex)
-	{
+	{		
 		if (!IsOperator(c))
 		{
 			output += c;
@@ -64,7 +66,7 @@ std::string Regex::postFix(const std::string& regex)
 			}
 		}
 		else
-		{
+		{			
 			int o = (int) GetOperator(c);
 			while (!operatorStack.empty())
 			{
@@ -75,11 +77,11 @@ std::string Regex::postFix(const std::string& regex)
 					break;
 				}
 
-				if (top < o)
+				if ((int) GetOperator(top) < o)
 				{
 					break;
 				}
-
+				
 				output += top;
 				operatorStack.pop();
 			}
