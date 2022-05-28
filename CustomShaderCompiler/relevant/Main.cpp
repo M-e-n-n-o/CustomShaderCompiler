@@ -1,4 +1,3 @@
-#include "../RegexToNFA.h"
 #include "Automata.h"
 #include "Regex.h"
 

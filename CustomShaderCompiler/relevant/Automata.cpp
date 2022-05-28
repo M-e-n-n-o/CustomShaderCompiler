@@ -236,8 +236,11 @@ AutomataBuilder& AutomataBuilder::addClosure()
 
 Automata AutomataBuilder::construct()
 {
+	if (m_automatas.size() > 1 || m_automatas.empty())
+	{
+		std::cout << "Could not construct an Automata" << std::endl;
+		return Automata();
+	}
+	
 	return m_automatas.top();
 }
-
-// TODO Deze methodes afmaken + een methode maken om de NFA om te zetten naar een DFA
-// https://medium.com/swlh/visualizing-thompsons-construction-algorithm-for-nfas-step-by-step-f92ef378581b
