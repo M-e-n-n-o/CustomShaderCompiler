@@ -2,7 +2,7 @@
 #include <iostream>
 
 Automata::Automata(const std::set<std::shared_ptr<State>>& states, const std::shared_ptr<State>& startState,
-	const std::shared_ptr<State>& finalState, const std::set<char>& alfabet) : m_states(m_states),
+	const std::shared_ptr<State>& finalState, const std::set<char>& alfabet) : m_states(states),
 	m_startState(startState),
 	m_finalState(finalState),
 	m_alfabet(m_alfabet) {}
@@ -102,28 +102,46 @@ void Automata::makeDeterministic()
 	std::set<std::shared_ptr<State>> newStates;
 
 	newStates.insert(m_startState);
-	
+	newStates.insert(errorState);
+
+	bool first = true;
 	while (true)
 	{
 		bool done = true;
 		std::vector<std::shared_ptr<State>> toAdd;
-		
+
 		for (auto& state : newStates)
 		{			
 			if (!state->isDeterministic(m_alfabet))
 			{
 				auto states = makeDeterministic(state, errorState);
+				
+				toAdd.clear();
 				toAdd.insert(toAdd.end(), states.begin(), states.end());
 				
 				done = false;
 			}
 		}
 
+		if (first)
+		{
+			newStates.erase(std::find(newStates.begin(), newStates.end(), m_startState));
+			first = false;
+		}
+
+		std::cout << "Current states: " << std::endl;
+		for (auto& state : newStates)
+			std::cout << state->name << std::endl;
+		
 		for (auto& state : toAdd)
 		{
+			std::cout << "Adding a new state: " << state->name << std::endl;
+			
 			auto pair = newStates.insert(state);
 			if (!pair.second)
 			{
+				std::cout << "State already exists!" << std::endl;
+				
 				auto& transitions = (*pair.first)->transitions;
 				for (int i = 0; i < transitions.size(); i++)
 				{
@@ -154,7 +172,7 @@ void Automata::makeDeterministic()
 	// Alle states goed in de automaat zetten
 }
 
-std::vector<std::shared_ptr<State>> Automata::makeDeterministic(const std::shared_ptr<State>& start, const std::shared_ptr<State>& error)
+std::set<std::shared_ptr<State>> Automata::makeDeterministic(const std::shared_ptr<State>& start, const std::shared_ptr<State>& error)
 {
 	std::set<std::shared_ptr<State>> startStates;
 	startStates.insert(start);
@@ -169,13 +187,15 @@ std::vector<std::shared_ptr<State>> Automata::makeDeterministic(const std::share
 	std::string stateName;
 	for (auto& state : startStates)
 	{
-		stateName += state->name + ", ";
+		stateName += state->name;
 	}
 	auto startState = std::make_shared<State>(stateName);
 
 	std::vector<std::pair<char, std::set<std::shared_ptr<State>>>> possibleNextStates;
 	for (auto& symbol : m_alfabet)
 	{
+		// std::cout << "Processing symbol: " << symbol << std::endl;
+		
 		auto statesPerSymbol = std::make_pair(symbol, std::set<std::shared_ptr<State>>());
 
 		for (auto& state : startStates)
@@ -189,23 +209,37 @@ std::vector<std::shared_ptr<State>> Automata::makeDeterministic(const std::share
 			}
 		}
 
-		for (auto& state : statesPerSymbol.second)
+		std::vector<std::shared_ptr<State>> epsilonTransitions(statesPerSymbol.second.begin(), statesPerSymbol.second.end());
+		for (int i = 0; i < epsilonTransitions.size(); i++)
 		{
+			auto& state = epsilonTransitions[i];
+			
 			for (auto& transition : state->transitions)
 			{
 				if (transition->symbol == EPSILON)
 				{
-					statesPerSymbol.second.insert(transition->to);
+					epsilonTransitions.push_back(transition->to);
 				}
 			}
 		}
+		
+		statesPerSymbol.second.insert(epsilonTransitions.begin(), epsilonTransitions.end());
 
+		// std::cout << "Added states: ";
+		// for (auto& state : statesPerSymbol.second)
+		// {
+		// 	std::cout << state->name << ", ";
+		// }
+		// std::cout << std::endl;
+		
 		possibleNextStates.push_back(statesPerSymbol);
 	}
 
-	std::vector<std::shared_ptr<State>> states;
-	states.push_back(startState);
+	std::set<std::shared_ptr<State>> states;
+	states.insert(startState);
 
+	std::cout << "Created start state: " << stateName << std::endl;
+	
 	for (auto& statesPerSymbol : possibleNextStates)
 	{
 		if (statesPerSymbol.second.empty())
@@ -218,14 +252,19 @@ std::vector<std::shared_ptr<State>> Automata::makeDeterministic(const std::share
 		std::string stateName;
 		for (auto& state : statesPerSymbol.second)
 		{
-			stateName += state->name + ", ";
+			stateName += state->name;
 		}
-
+		
 		auto nextState = std::make_shared<State>(stateName);
 		auto transition = std::make_shared<Transition>(startState, statesPerSymbol.first, nextState);
 		startState->transitions.push_back(transition);
 
-		states.push_back(nextState);
+		auto it = states.insert(nextState);
+
+		if (it.second)
+		{
+			std::cout << "Created next state: " << stateName << std::endl;
+		}
 	}
 
 	return states;

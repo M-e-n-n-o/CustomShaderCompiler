@@ -65,9 +65,9 @@ public:
 		return true;
 	}
 
-	friend bool operator<(const State& l, const State& r)
+	friend bool operator<(const std::shared_ptr<State>& l, const std::shared_ptr<State>& r)
 	{
-		return l.hash < r.hash;
+		return l->hash < r->hash;
 	}
 
 	const std::string toString() const

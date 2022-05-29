@@ -40,7 +40,7 @@ private:
 	bool validate(const std::shared_ptr<State>& start, const std::string& input);
 
 	// Powerset construction
-	std::vector<std::shared_ptr<State>> makeDeterministic(const std::shared_ptr<State>& start, const std::shared_ptr<State>& error);
+	std::set<std::shared_ptr<State>> makeDeterministic(const std::shared_ptr<State>& start, const std::shared_ptr<State>& error);
 };
 
 class AutomataBuilder
