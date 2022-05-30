@@ -16,8 +16,8 @@ public:
 	char symbol;
 	std::shared_ptr<State> to;
 	
-	Transition(const std::shared_ptr<State>& from, char symbol, const std::shared_ptr<State>& to) : from(from), symbol(symbol), to(to) {}
-	Transition(const std::shared_ptr<State>& fromOrTo, char symbol) : Transition(fromOrTo, symbol, fromOrTo) { }
+	Transition(const std::shared_ptr<State>& from, char symbol, const std::shared_ptr<State>& to) : from(from), symbol(symbol), to(to) { }
+	Transition(const std::shared_ptr<State>& fromOrTo, char symbol) : Transition(fromOrTo, symbol, fromOrTo) {}
 	Transition(const std::shared_ptr<State>& from, const std::shared_ptr<State>& to) : Transition(from, EPSILON, to) {}
 };
 
@@ -30,10 +30,24 @@ public:
 	std::string name;
 	std::vector<std::shared_ptr<Transition>> transitions;
 
+	int random;
+
 	State(const std::string& name) : name(name)
 	{
 		std::hash<std::string> hasher;
 		hash = hasher(name);
+
+		random = std::rand();
+	}
+
+	State(const State&& other)
+	{
+		std::cout << "Copied!" << std::endl;
+	}
+
+	void printRandom()
+	{
+		std::cout << "State: " << name << ", random: " << random << std::endl;
 	}
 
 	bool isDeterministic(const std::set<char>& alfabet)
@@ -68,6 +82,11 @@ public:
 	friend bool operator<(const std::shared_ptr<State>& l, const std::shared_ptr<State>& r)
 	{
 		return l->hash < r->hash;
+	}
+
+	friend bool operator==(const std::shared_ptr<State>& l, const std::shared_ptr<State>& r)
+	{
+		return l->hash == r->hash;
 	}
 
 	const std::string toString() const
