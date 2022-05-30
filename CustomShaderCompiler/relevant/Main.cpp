@@ -1,13 +1,12 @@
 #include <iostream>
-#include "AutomataBuilder.h"
 #include "Automata.h"
 #include "Regex.h"
 
 int main()
 {
 	Regex regex("a.(a|b)*.b");
-	Automata m = AutomataBuilder(regex).construct();
 
+	Automata m = regex.constructAutomata();
 	m.makeDeterministic();
 	m.printTransitions();
 	

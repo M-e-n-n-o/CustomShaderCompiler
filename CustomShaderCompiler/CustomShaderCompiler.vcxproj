@@ -142,7 +142,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="relevant\Automata.cpp" />
-    <ClCompile Include="relevant\AutomataBuilder.cpp" />
     <ClCompile Include="relevant\Main.cpp" />
     <ClCompile Include="relevant\Regex.cpp" />
     <ClCompile Include="RegexOld.cpp" />
@@ -151,7 +150,6 @@
     <ClInclude Include="relevant\Automata.h" />
     <ClInclude Include="AutomataTest.h" />
     <ClInclude Include="Example.h" />
-    <ClInclude Include="relevant\AutomataBuilder.h" />
     <ClInclude Include="relevant\Regex.h" />
     <ClInclude Include="RegexOld.h" />
     <ClInclude Include="RegexTest.h" />

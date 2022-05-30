@@ -2,14 +2,13 @@
 #include <string>
 #include <vector>
 #include <memory>
-
 #include <iostream>
 
 #define EPSILON '$'
 
 class State;
 
-class Transition
+struct Transition
 {
 public:
 	std::shared_ptr<State> from;
@@ -30,24 +29,10 @@ public:
 	std::string name;
 	std::vector<std::shared_ptr<Transition>> transitions;
 
-	int random;
-
 	State(const std::string& name) : name(name)
 	{
 		std::hash<std::string> hasher;
 		hash = hasher(name);
-
-		random = std::rand();
-	}
-
-	State(const State&& other)
-	{
-		std::cout << "Copied!" << std::endl;
-	}
-
-	void printRandom()
-	{
-		std::cout << "State: " << name << ", random: " << random << std::endl;
 	}
 
 	bool isDeterministic(const std::set<char>& alfabet)
