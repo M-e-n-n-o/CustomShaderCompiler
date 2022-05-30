@@ -11,6 +11,7 @@ class Regex
 {
 private:
 	std::string m_regex;
+	std::string m_postfix;
 	
 public:
 	Regex(const std::string& regex);
@@ -26,7 +27,7 @@ public:
 		Or = 0
 	};
 
-	const std::string& getRegex() const { return m_regex; }
+	const std::string& getRegex(bool postfixNotation = false) const;
 
 	static bool IsOperator(char c);
 	

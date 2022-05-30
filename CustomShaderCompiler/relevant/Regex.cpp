@@ -5,7 +5,18 @@
 
 Regex::Regex(const std::string& regex)
 {
-	m_regex = postFix(regex);
+	m_regex = regex;
+	m_postfix = postFix(regex);
+}
+
+const std::string& Regex::getRegex(bool postfixNotation) const
+{
+	if (postfixNotation)
+	{
+		return m_postfix;
+	}
+
+	return m_regex;
 }
 
 bool Regex::IsOperator(char c)

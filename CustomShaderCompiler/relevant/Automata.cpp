@@ -55,6 +55,32 @@ void Automata::printTransitions()
 	}
 }
 
+std::shared_ptr<State> Automata::findState(const std::string& stateName)
+{
+	for (auto& state : m_states)
+	{
+		if (state->name == stateName)
+		{
+			return state;
+		}
+	}
+
+	return nullptr;
+}
+
+std::shared_ptr<State> Automata::findState(const std::string& stateName, std::set<std::shared_ptr<State>>& states)
+{
+	for (auto& state : states)
+	{
+		if (state->name == stateName)
+		{
+			return state;
+		}
+	}
+
+	return nullptr;
+}
+
 bool Automata::validate(const std::string& input)
 {
 	return validate(m_startState, input);
@@ -104,43 +130,17 @@ bool Automata::validate(const std::shared_ptr<State>& start, const std::string& 
 	return false;
 }
 
-std::shared_ptr<State> Automata::findState(const std::string& stateName)
-{
-	for (auto& state : m_states)
-	{
-		if (state->name == stateName)
-		{
-			return state;
-		}
-	}
-
-	return nullptr;
-}
-
-std::shared_ptr<State> Automata::findState(const std::string& stateName, std::set<std::shared_ptr<State>>& states)
-{
-	for (auto& state : states)
-	{
-		if (state->name == stateName)
-		{
-			return state;
-		}
-	}
-
-	return nullptr;
-}
-
 void Automata::makeDeterministic()
 {
+	// Create the error state
 	auto errorState = std::make_shared<State>("Error");
 	for (auto& symbol : m_alfabet)
 	{
 		auto transition = std::make_shared<Transition>(errorState, symbol);		
 		errorState->transitions.push_back(transition);
 	}	
-	
-	std::set<std::shared_ptr<State>> newStates;
 
+	std::set<std::shared_ptr<State>> newStates;
 	newStates.insert(m_startState);
 	newStates.insert(errorState);
 
@@ -151,9 +151,11 @@ void Automata::makeDeterministic()
 		std::vector<std::shared_ptr<State>> toAdd;
 
 		for (auto& state : newStates)
-		{			
+		{
+			// Are all the new states deterministic?
 			if (!state->isDeterministic(m_alfabet))
 			{
+				// If not, make the state deterministic by defining a transition for every character in the alfabet and generate the states that are needed for these transitions
 				auto states = makeDeterministic(state, errorState);
 				
 				toAdd.clear();
@@ -163,36 +165,24 @@ void Automata::makeDeterministic()
 			}
 		}
 
+		// Remove the original start state from the new states (this was only added to have a starting point for the algorithm)
 		if (first)
 		{
 			newStates.erase(std::find(newStates.begin(), newStates.end(), m_startState));			
 			first = false;
 		}
 
-		// std::cout << "Current states: " << std::endl;
-		// for (auto& state : newStates)
-		// 	std::cout << state->name << std::endl;
-		
 		for (auto& state : toAdd)
 		{
-			// std::cout << "Adding a new state: " << state->name << std::endl;
-			
+			// Add each new generated state to the new states
 			auto pair = newStates.insert(state);
+
+			// If the state already existed, transfer the transitions from the new state, which did not already exist, to the original
 			if (!pair.second)
-			{
-				// std::cout << "State already exists!" << std::endl;
-				
+			{				
 				auto& transitions = (*pair.first)->transitions;
 				for (auto& transitionNew : state->transitions)
 				{
-					// if (transitionNew->to == state)
-					// {
-					// 	transitionNew->to->printRandom();
-					// 	std::cout << transitionNew->to->transitions.size();
-					// 	transitionNew->to->transitions[0]->to->transitions[0]->to->printRandom();
-					// }
-					
-					
 					bool exists = false;
 					for (auto& transitionOld : transitions)
 					{
@@ -204,26 +194,26 @@ void Automata::makeDeterministic()
 
 					if (!exists)
 					{
-						// std::cout << "Detected new transition for char: " << transitionNew->symbol << std::endl;
-
-						transitionNew->to = findState(transitionNew->to->name, newStates);
+						auto to = findState(transitionNew->to->name, newStates);
+						if (to != nullptr)
+						{
+							transitionNew->to = to;	
+						}
 						
 						transitions.push_back(transitionNew);
-
-						// auto t = std::make_shared<Transition>((*pair.first), transitionNew->symbol, findState(transitionNew->to->name, newStates));
-						// transitions.push_back(t);
-						
 					}
 				}
 			}
 		}
-		
+
+		// Only stop iterating till all states are deterministic
 		if (done)
 		{
 			break;
 		}
 	}
 
+	// Set the new states
 	m_states.clear();
 	m_states = newStates;
 
@@ -232,13 +222,11 @@ void Automata::makeDeterministic()
 	{
 		if (state->name == m_startState->name)
 		{
-			// std::cout << state->name << " is the start state" << std::endl;
 			m_startState = state;
 		}
 
 		if (state->name.find((*m_finalStates.begin())->name) != std::string::npos)
 		{
-			// std::cout << state->name << " is an end state" << std::endl;
 			finalStates.insert(state);
 		}
 	}
@@ -250,6 +238,7 @@ std::set<std::shared_ptr<State>> Automata::makeDeterministic(const std::shared_p
 {	
 	std::set<std::shared_ptr<State>> startStates;
 
+	// Get the original states from the given start state (the start state can be a combined state)
 	std::string name = start->name;
 	std::string delimiter = ", ";
 	int pos = 0;
@@ -262,7 +251,8 @@ std::set<std::shared_ptr<State>> Automata::makeDeterministic(const std::shared_p
 		startStates.insert(findState(token));
 	}
 	startStates.insert(findState(name));
-	
+
+	// Check if there are any other possible start states by using epsilon transitions
 	for (auto& transition : start->transitions)
 	{
 		if (transition->symbol == EPSILON)
@@ -271,6 +261,7 @@ std::set<std::shared_ptr<State>> Automata::makeDeterministic(const std::shared_p
 		}
 	}
 
+	// Determine the state name
 	std::string stateName;
 	int i = 0;
 	for (auto& state : startStates)
@@ -287,13 +278,13 @@ std::set<std::shared_ptr<State>> Automata::makeDeterministic(const std::shared_p
 	}
 	auto startState = std::make_shared<State>(stateName);
 
-	// std::cout << "Start state: " << stateName << std::endl;
-	
+	// For each symbol of the alfabet
 	std::vector<std::pair<char, std::set<std::shared_ptr<State>>>> possibleNextStates;
 	for (auto& symbol : m_alfabet)
 	{		
 		auto statesPerSymbol = std::make_pair(symbol, std::set<std::shared_ptr<State>>());
 
+		// Check if there are any possible states to go to with the symbol
 		for (auto& state : startStates)
 		{			
 			for (auto& transition : state->transitions)
@@ -305,6 +296,7 @@ std::set<std::shared_ptr<State>> Automata::makeDeterministic(const std::shared_p
 			}
 		}
 
+		// Check if there are any other possible states to go to from the already found possible states by using epsilon transitions
 		std::vector<std::shared_ptr<State>> epsilonTransitions(statesPerSymbol.second.begin(), statesPerSymbol.second.end());
 		for (int i = 0; i < epsilonTransitions.size(); i++)
 		{
@@ -320,30 +312,25 @@ std::set<std::shared_ptr<State>> Automata::makeDeterministic(const std::shared_p
 		}
 		
 		statesPerSymbol.second.insert(epsilonTransitions.begin(), epsilonTransitions.end());
-
-		// std::cout << "Added states: ";
-		// for (auto& state : statesPerSymbol.second)
-		// {
-		// 	std::cout << state->name << ", ";
-		// }
-		// std::cout << std::endl;
-		
 		possibleNextStates.push_back(statesPerSymbol);
 	}
 
+	// Put all the generated states in a set
 	std::set<std::shared_ptr<State>> states;
 	states.insert(startState);
-	
+
+	// For every symbol in the alfabet, generate a transition for the start state
 	for (auto& statesPerSymbol : possibleNextStates)
 	{
+		// If there were no possible transitions found, make a transition to the error state
 		if (statesPerSymbol.second.empty())
 		{
-			// std::cout << "Created error transition to char: " << statesPerSymbol.first << std::endl;
 			auto transition = std::make_shared<Transition>(startState, statesPerSymbol.first, error);
 			startState->transitions.push_back(transition);
 			continue;
 		}
 
+		// Generate a new name for the combined states
 		std::string stateName;
 		int i = 0;
 		for (auto& state : statesPerSymbol.second)
@@ -359,191 +346,23 @@ std::set<std::shared_ptr<State>> Automata::makeDeterministic(const std::shared_p
 			
 			i++;
 		}
-		
-		auto nextState = std::make_shared<State>(stateName);
-		auto it = states.insert(nextState);
-		
-		if (!it.second)
-		{
-			// std::cout << "Created transition to itself for char: " << statesPerSymbol.first << std::endl;
-			auto transition = std::make_shared<Transition>(startState, statesPerSymbol.first);
-			startState->transitions.push_back(transition);
 
-			// std::cout << startState->toString() << std::endl;
-			// startState->transitions[0]->to->printRandom();
-			// std::cout << startState->transitions[0]->to->transitions.size();
-			// startState->transitions[0]->to->transitions[0]->to->printRandom();
-			
+		// Generate a new state the start state will be able to transition to
+		auto nextState = std::make_shared<State>(stateName);
+		auto pair = states.insert(nextState);
+
+		if (!pair.second)
+		{
+			// If the state already existed (only happens when a transition is to itself), generate a transition to itself
+			auto transition = std::make_shared<Transition>(startState, statesPerSymbol.first);
+			startState->transitions.push_back(transition);			
 		} else
 		{
-			// std::cout << "Created next state: " << stateName << " for char: " << statesPerSymbol.first << std::endl;
+			// If not, generate a normal transition to the new state
 			auto transition = std::make_shared<Transition>(startState, statesPerSymbol.first, nextState);
 			startState->transitions.push_back(transition);
 		}
 	}
 
 	return states;
-}
-
-
-// --------------------------------------------------------------------------
-//									BUILDER
-// --------------------------------------------------------------------------
-
-AutomataBuilder::AutomataBuilder(Regex& regex)
-{
-	for (auto& c : regex.getRegex())
-	{
-		if (!Regex::IsOperator(c))
-		{
-			addSymbol(c);
-		} else
-		{
-			switch (Regex::GetOperator(c))
-			{
-			case Regex::Symbol::Star:	addClosure(); break;
-			case Regex::Symbol::Dot:	addConcatenation(); break;
-			case Regex::Symbol::Or:		addUnion(); break;
-			case Regex::Symbol::None:	
-			default: std::cerr << "Operator not supported!" << std::endl;
-			}
-		}
-	}
-}
-
-AutomataBuilder& AutomataBuilder::addSymbol(char symbol)
-{
-	m_symbols.insert(symbol);
-
-	auto from = std::make_shared<State>(std::to_string(m_stateCount++));
-	auto to = std::make_shared<State>(std::to_string(m_stateCount++));
-	
-	auto transition = std::make_shared<Transition>(from, symbol, to);
-	from->transitions.push_back(transition);
-
-	Automata a;
-	a.setStartState(from);
-	a.addFinalState(to);
-	a.addSymbol(symbol);
-	m_automatas.push(a);
-
-	return *this;
-}
-
-AutomataBuilder& AutomataBuilder::addUnion()
-{	
-	Automata top = m_automatas.top();
-	m_automatas.pop();
-
-	Automata second = m_automatas.top();
-	m_automatas.pop();
-
-	auto start = std::make_shared<State>(std::to_string(m_stateCount++));
-	auto tStart1 = std::make_shared<Transition>(start, top.getStartState());
-	auto tStart2 = std::make_shared<Transition>(start, second.getStartState());
-	start->transitions.push_back(tStart1);
-	start->transitions.push_back(tStart2);
-
-	auto& topFinalState = *top.getFinalStates().begin();
-	auto& secondFinalState = *second.getFinalStates().begin();
-	
-	auto end = std::make_shared<State>(std::to_string(m_stateCount++));
-	auto tEnd1 = std::make_shared<Transition>(topFinalState, end);
-	auto tEnd2 = std::make_shared<Transition>(secondFinalState, end);
-	topFinalState->transitions.push_back(tEnd1);
-	secondFinalState->transitions.push_back(tEnd2);
-	
-	Automata a;
-	a.setStartState(start);
-	a.addStates(top.getStates());
-	a.addStates(second.getStates());
-	a.addFinalState(end);
-	a.addSymbols(top.getAlfabet());
-	a.addSymbols(second.getAlfabet());
-	m_automatas.push(a);
-	
-	return *this;
-}
-
-AutomataBuilder& AutomataBuilder::addConcatenation()
-{
-	Automata top = m_automatas.top();
-	m_automatas.pop();
-
-	Automata second = m_automatas.top();
-	m_automatas.pop();
-
-	auto topFinalState = *top.getFinalStates().begin();
-	auto& secondFinalState = *second.getFinalStates().begin();
-	
-	for (auto& state : second.getStates())
-	{
-		if (state == secondFinalState)
-		{
-			continue;
-		}
-
-		for (auto& transition : state->transitions)
-		{
-			if (transition->to == secondFinalState)
-			{
-				transition->to = top.getStartState();
-			}
-		}
-	}
-
-	const auto& it = std::find(second.getStates().begin(), second.getStates().end(), secondFinalState);
-	second.getStates().erase(it);
-	
-	Automata a;
-	a.setStartState(second.getStartState());
-	a.addStates(top.getStates());
-	a.addStates(second.getStates());
-	a.addFinalState(topFinalState);
-	a.addSymbols(top.getAlfabet());
-	a.addSymbols(second.getAlfabet());
-	m_automatas.push(a);
-	
-	return *this;
-}
-
-AutomataBuilder& AutomataBuilder::addClosure()
-{
-	Automata top = m_automatas.top();
-	m_automatas.pop();
-
-	auto& topFinalState = *top.getFinalStates().begin();
-	
-	auto end = std::make_shared<State>(std::to_string(m_stateCount++));
-	auto tEnd1 = std::make_shared<Transition>(topFinalState, end);
-	topFinalState->transitions.push_back(tEnd1);
-	
-	auto tRepeat = std::make_shared<Transition>(topFinalState, top.getStartState());
-	topFinalState->transitions.push_back(tRepeat);
-	
-	auto start = std::make_shared<State>(std::to_string(m_stateCount++));
-	auto tStart1 = std::make_shared<Transition>(start, top.getStartState());
-	auto tStart2 = std::make_shared<Transition>(start, end);
-	start->transitions.push_back(tStart1);
-	start->transitions.push_back(tStart2);
-
-	Automata a;
-	a.setStartState(start);
-	a.addStates(top.getStates());
-	a.addFinalState(end);
-	a.addSymbols(top.getAlfabet());
-	m_automatas.push(a);
-	
-	return *this;
-}
-
-Automata AutomataBuilder::construct()
-{	
-	if (m_automatas.size() > 1 || m_automatas.empty())
-	{
-		std::cerr << "Could not construct an Automata" << std::endl;
-		return Automata();
-	}
-	
-	return m_automatas.top();
 }

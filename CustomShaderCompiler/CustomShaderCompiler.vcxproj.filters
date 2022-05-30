@@ -27,6 +27,9 @@
     <ClCompile Include="relevant\Automata.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="relevant\AutomataBuilder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="RegexTest.h">
@@ -51,6 +54,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="relevant\State.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="relevant\AutomataBuilder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

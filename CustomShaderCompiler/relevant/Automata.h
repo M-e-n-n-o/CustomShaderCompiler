@@ -1,16 +1,13 @@
 #pragma once
 #include <set>
-#include <stack>
 #include <memory>
 #include "State.h"
-#include "Regex.h"
 
 class Automata
 {
 private:
 	std::set<std::shared_ptr<State>> m_states;
 	std::shared_ptr<State> m_startState;
-	// std::shared_ptr<State> m_finalState;
 	std::set<std::shared_ptr<State>> m_finalStates;
 	std::set<char> m_alfabet;
 
@@ -46,27 +43,4 @@ private:
 	
 	// Powerset construction
 	std::set<std::shared_ptr<State>> makeDeterministic(const std::shared_ptr<State>& start, const std::shared_ptr<State>& error);
-};
-
-class AutomataBuilder
-{
-private:
-	int m_stateCount = 0;
-
-	std::set<char> m_symbols;
-
-	std::stack<Automata> m_automatas;
-
-public:
-	AutomataBuilder() = default;
-	AutomataBuilder(Regex& regex);
-	~AutomataBuilder() = default;
-
-	// Thompson's construction
-	AutomataBuilder& addSymbol(char symbol);
-	AutomataBuilder& addUnion();
-	AutomataBuilder& addConcatenation();
-	AutomataBuilder& addClosure();
-
-	Automata construct();
 };
