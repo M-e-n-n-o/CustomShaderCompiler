@@ -5,20 +5,20 @@
 int main()
 {
 	Regex regex("a.(a|b)*.b");
-
+	
 	Automata m = regex.constructAutomata();
 	m.makeDeterministic();
 	m.printTransitions();
 	
-	bool isValid = m.validate("abab");
+	bool isValid = m.validate("ab");
 	std::cout << isValid << std::endl;
 
-	isValid = m.validate("aab");
+	isValid = m.validate("a");
 	std::cout << isValid << std::endl;
 	
-	isValid = m.validate("aaab");
+	isValid = m.validate("b");
 	std::cout << isValid << std::endl;
 	
-	isValid = m.validate("aba");
+	isValid = m.validate("bb");
 	std::cout << isValid << std::endl;
 }

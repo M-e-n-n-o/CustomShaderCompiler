@@ -24,9 +24,9 @@ const std::string& Regex::getRegex(bool postfixNotation)
 	return m_regex;
 }
 
-Automata Regex::constructAutomata() const
+Automata Regex::constructAutomata()
 {
-	return AutomataBuilder(m_postfix).construct();
+	return AutomataBuilder(getRegex(true)).construct();
 }
 
 bool Regex::IsOperator(char c)
@@ -130,7 +130,7 @@ std::string Regex::postFix(const std::string& regex)
 
 
 Regex::AutomataBuilder::AutomataBuilder(const std::string& postfix)
-{
+{	
 	for (auto& c : postfix)
 	{
 		if (!Regex::IsOperator(c))

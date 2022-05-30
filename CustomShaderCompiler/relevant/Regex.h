@@ -21,7 +21,7 @@ public:
 	~Regex() = default;
 
 	const std::string& getRegex(bool postfixNotation = false);
-	Automata constructAutomata() const;
+	Automata constructAutomata();
 
 private:
 	enum class Symbol
