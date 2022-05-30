@@ -7,13 +7,17 @@
 Regex::Regex(const std::string& regex)
 {
 	m_regex = regex;
-	m_postfix = postFix(regex);
 }
 
-const std::string& Regex::getRegex(bool postfixNotation) const
+const std::string& Regex::getRegex(bool postfixNotation)
 {
 	if (postfixNotation)
 	{
+		if (m_postfix.empty())
+		{
+			m_postfix = postFix(m_regex);
+		}
+		
 		return m_postfix;
 	}
 

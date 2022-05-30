@@ -20,7 +20,7 @@ public:
 	Regex(const std::string& regex);
 	~Regex() = default;
 
-	const std::string& getRegex(bool postfixNotation = false) const;
+	const std::string& getRegex(bool postfixNotation = false);
 	Automata constructAutomata() const;
 
 private:
