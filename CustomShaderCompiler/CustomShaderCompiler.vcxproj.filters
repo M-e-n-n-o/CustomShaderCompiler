@@ -53,5 +53,8 @@
     <ClInclude Include="relevant\State.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="relevant\Symbol.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

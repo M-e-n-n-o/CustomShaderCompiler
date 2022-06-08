@@ -3,6 +3,7 @@
 #include <vector>
 #include <memory>
 #include <iostream>
+#include "Symbol.h"
 
 #define EPSILON '$'
 
@@ -12,12 +13,12 @@ struct Transition
 {
 public:
 	std::shared_ptr<State> from;
-	char symbol;
+	std::shared_ptr<Symbol> symbol;
 	std::shared_ptr<State> to;
 	
-	Transition(const std::shared_ptr<State>& from, char symbol, const std::shared_ptr<State>& to) : from(from), symbol(symbol), to(to) { }
-	Transition(const std::shared_ptr<State>& fromOrTo, char symbol) : Transition(fromOrTo, symbol, fromOrTo) {}
-	Transition(const std::shared_ptr<State>& from, const std::shared_ptr<State>& to) : Transition(from, EPSILON, to) {}
+	Transition(const std::shared_ptr<State>& from, const std::shared_ptr<Symbol>& symbol, const std::shared_ptr<State>& to) : from(from), symbol(symbol), to(to) { }
+	Transition(const std::shared_ptr<State>& fromOrTo, const std::shared_ptr<Symbol>& symbol) : Transition(fromOrTo, symbol, fromOrTo) {}
+	Transition(const std::shared_ptr<State>& from, const std::shared_ptr<State>& to) : Transition(from, std::make_shared<Letter>(EPSILON), to) {}
 };
 
 class State
@@ -35,7 +36,7 @@ public:
 		hash = hasher(name);
 	}
 
-	bool isDeterministic(const std::set<char>& alfabet)
+	bool isDeterministic(const std::set<std::shared_ptr<Symbol>>& alfabet)
 	{
 		for (auto& c : alfabet)
 		{			
@@ -49,7 +50,7 @@ public:
 					break;
 				}
 
-				if (transition->symbol == EPSILON)
+				if (transition->symbol->validate(EPSILON))
 				{
 					return false;
 				}
@@ -79,7 +80,7 @@ public:
 		std::string s;
 		for (auto& transition : transitions)
 		{
-			s += name + "\t-- " + transition->symbol + " -->\t" + transition->to->name + "\n";
+			s += name + "\t-- " + transition->symbol->toString() + " -->\t" + transition->to->name + "\n";
 		}
 	
 		return s;

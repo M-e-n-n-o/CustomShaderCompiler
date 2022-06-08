@@ -3,6 +3,7 @@
 #include <stack>
 #include <set>
 #include "Automata.h"
+#include "Symbol.h"
 
 #define OPEN '('
 #define CLOSE ')'
@@ -24,7 +25,7 @@ public:
 	Automata constructAutomata();
 
 private:
-	enum class Symbol
+	enum class Operator
 	{
 		None = -1,
 
@@ -37,7 +38,7 @@ private:
 	static bool IsOperator(char c);
 
 	// Result can be casted to the Symbol
-	static Symbol GetOperator(char c);
+	static Operator GetOperator(char c);
 	
 	static std::string postFix(const std::string& regex);
 
@@ -47,7 +48,7 @@ private:
 	private:
 		int m_stateCount = 0;
 
-		std::set<char> m_symbols;
+		std::set<std::shared_ptr<Symbol>> m_symbols;
 
 		std::stack<Automata> m_automatas;
 

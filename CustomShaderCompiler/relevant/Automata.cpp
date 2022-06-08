@@ -2,18 +2,18 @@
 #include <iostream>
 
 Automata::Automata(const std::set<std::shared_ptr<State>>& states, const std::shared_ptr<State>& startState,
-	const std::shared_ptr<State>& finalState, const std::set<char>& alfabet) : m_states(states),
+	const std::shared_ptr<State>& finalState, const std::set<std::shared_ptr<Symbol>>& alfabet) : m_states(states),
 	m_startState(startState),
-	m_alfabet(alfabet)
+	m_language(alfabet)
 {
 	m_finalStates.insert(finalState);
 }
 
 Automata::Automata(const std::set<std::shared_ptr<State>>& states, const std::shared_ptr<State>& startState,
-	const std::set<std::shared_ptr<State>>& finalStates, const std::set<char>& alfabet) : m_states(states),
+	const std::set<std::shared_ptr<State>>& finalStates, const std::set<std::shared_ptr<Symbol>>& alfabet) : m_states(states),
 	m_startState(startState),
 	m_finalStates(finalStates),
-	m_alfabet(alfabet) {}
+	m_language(alfabet) {}
 
 void Automata::addState(std::shared_ptr<State>& state)
 {
@@ -37,14 +37,14 @@ void Automata::addFinalState(std::shared_ptr<State>& state)
 	m_finalStates.insert(state);
 }
 
-void Automata::addSymbol(char symbol)
+void Automata::addSymbol(const std::shared_ptr<Symbol>& symbol)
 {
-	m_alfabet.insert(symbol);
+	m_language.insert(symbol);
 }
 
-void Automata::addSymbols(std::set<char>& symbols)
+void Automata::addSymbols(std::set<std::shared_ptr<Symbol>>& symbols)
 {
-	m_alfabet.insert(symbols.begin(), symbols.end());
+	m_language.insert(symbols.begin(), symbols.end());
 }
 
 void Automata::printTransitions()
@@ -83,33 +83,46 @@ std::shared_ptr<State> Automata::findState(const std::string& stateName, std::se
 
 bool Automata::validate(const std::string& input)
 {
+	std::vector<std::string> list;
+	for (const char& c : input)
+	{
+		list.emplace_back(1, c);
+	}
+
+	return validate(list);
+}
+
+bool Automata::validate(const std::vector<std::string>& input)
+{
 	return validate(m_startState, input);
 }
 
-bool Automata::validate(const std::shared_ptr<State>& start, const std::string& input)
-{
+bool Automata::validate(const std::shared_ptr<State>& start, const std::vector<std::string>& input)
+{	
 	if (input.empty())
-	{		
+	{
 		for (auto& finalState : m_finalStates)
-		{			
+		{
 			if (start == finalState)
 			{
 				return true;
 			}
 		}
+
+		return false;
 	}
-	
+
 	bool isValid = false;
 	bool didTransition = false;
 	for (auto& transition : start->transitions)
 	{
-		if (transition->symbol == EPSILON)
+		if (transition->symbol->validate(EPSILON))
 		{
 			std::cerr << "Automata cannot contain any epsilons!" << std::endl;
 			return false;
 		}
 		
-		if (transition->symbol == input[0])
+		if (transition->symbol->validate(input[0]))
 		{
 			if (didTransition)
 			{
@@ -117,7 +130,7 @@ bool Automata::validate(const std::shared_ptr<State>& start, const std::string& 
 				return false;
 			}
 
-			isValid = validate(transition->to, input.substr(1));
+			isValid = validate(transition->to, std::vector<std::string>(input.begin() + 1, input.end()));
 			didTransition = true;
 		}
 	}
@@ -134,7 +147,7 @@ void Automata::makeDeterministic()
 {
 	// Create the error state
 	auto errorState = std::make_shared<State>("Error");
-	for (auto& symbol : m_alfabet)
+	for (auto& symbol : m_language)
 	{
 		auto transition = std::make_shared<Transition>(errorState, symbol);		
 		errorState->transitions.push_back(transition);
@@ -153,7 +166,7 @@ void Automata::makeDeterministic()
 		for (auto& state : newStates)
 		{
 			// Are all the new states deterministic?
-			if (!state->isDeterministic(m_alfabet))
+			if (!state->isDeterministic(m_language))
 			{
 				// If not, make the state deterministic by defining a transition for every character in the alfabet and generate the states that are needed for these transitions
 				auto states = makeDeterministic(state, errorState);
@@ -185,7 +198,7 @@ void Automata::makeDeterministic()
 				{
 					bool exists = false;
 					for (auto& transitionOld : transitions)
-					{
+					{						
 						if (transitionOld->symbol == transitionNew->symbol)
 						{
 							exists = true;
@@ -255,7 +268,7 @@ std::set<std::shared_ptr<State>> Automata::makeDeterministic(const std::shared_p
 	// Check if there are any other possible start states by using epsilon transitions
 	for (auto& transition : start->transitions)
 	{
-		if (transition->symbol == EPSILON)
+		if (transition->symbol->validate(EPSILON))
 		{			
 			startStates.insert(transition->to);
 		}
@@ -279,8 +292,8 @@ std::set<std::shared_ptr<State>> Automata::makeDeterministic(const std::shared_p
 	auto startState = std::make_shared<State>(stateName);
 
 	// For each symbol of the alfabet
-	std::vector<std::pair<char, std::set<std::shared_ptr<State>>>> possibleNextStates;
-	for (auto& symbol : m_alfabet)
+	std::vector<std::pair<std::shared_ptr<Symbol>, std::set<std::shared_ptr<State>>>> possibleNextStates;
+	for (auto& symbol : m_language)
 	{		
 		auto statesPerSymbol = std::make_pair(symbol, std::set<std::shared_ptr<State>>());
 
@@ -304,7 +317,7 @@ std::set<std::shared_ptr<State>> Automata::makeDeterministic(const std::shared_p
 			
 			for (auto& transition : state->transitions)
 			{
-				if (transition->symbol == EPSILON)
+				if (transition->symbol->validate(EPSILON))
 				{
 					epsilonTransitions.push_back(transition->to);
 				}

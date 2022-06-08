@@ -155,6 +155,7 @@
     <ClInclude Include="RegexTest.h" />
     <ClInclude Include="RegexToNFA.h" />
     <ClInclude Include="relevant\State.h" />
+    <ClInclude Include="relevant\Symbol.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

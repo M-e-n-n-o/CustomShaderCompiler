@@ -42,14 +42,14 @@ bool Regex::IsOperator(char c)
 	}
 }
 
-Regex::Symbol Regex::GetOperator(char c)
+Regex::Operator Regex::GetOperator(char c)
 {
 	switch (c)
 	{
-	case STAR:	return Symbol::Star;
-	case DOT:	return Symbol::Dot;
-	case OR:	return Symbol::Or;
-	default:	return Symbol::None;
+	case STAR:	return Operator::Star;
+	case DOT:	return Operator::Dot;
+	case OR:	return Operator::Or;
+	default:	return Operator::None;
 	}
 }
 
@@ -141,10 +141,10 @@ Regex::AutomataBuilder::AutomataBuilder(const std::string& postfix)
 		{
 			switch (Regex::GetOperator(c))
 			{
-			case Regex::Symbol::Star:	addClosure(); break;
-			case Regex::Symbol::Dot:	addConcatenation(); break;
-			case Regex::Symbol::Or:		addUnion(); break;
-			case Regex::Symbol::None:
+			case Regex::Operator::Star:	addClosure(); break;
+			case Regex::Operator::Dot:	addConcatenation(); break;
+			case Regex::Operator::Or:		addUnion(); break;
+			case Regex::Operator::None:
 			default: std::cerr << "Operator not supported!" << std::endl;
 			}
 		}
@@ -152,19 +152,20 @@ Regex::AutomataBuilder::AutomataBuilder(const std::string& postfix)
 }
 
 Regex::AutomataBuilder& Regex::AutomataBuilder::addSymbol(char symbol)
-{
-	m_symbols.insert(symbol);
-
+{	
+	auto letter = std::make_shared<Letter>(symbol);
+	auto pair = m_symbols.insert(letter);
+	
 	auto from = std::make_shared<State>(std::to_string(m_stateCount++));
 	auto to = std::make_shared<State>(std::to_string(m_stateCount++));
 
-	auto transition = std::make_shared<Transition>(from, symbol, to);
+	auto transition = std::make_shared<Transition>(from, letter, to);
 	from->transitions.push_back(transition);
 
 	Automata a;
 	a.setStartState(from);
 	a.addFinalState(to);
-	a.addSymbol(symbol);
+	a.addSymbol(letter);
 	m_automatas.push(a);
 
 	return *this;
@@ -198,8 +199,8 @@ Regex::AutomataBuilder& Regex::AutomataBuilder::addUnion()
 	a.addStates(top.getStates());
 	a.addStates(second.getStates());
 	a.addFinalState(end);
-	a.addSymbols(top.getAlfabet());
-	a.addSymbols(second.getAlfabet());
+	a.addSymbols(top.getLanguage());
+	a.addSymbols(second.getLanguage());
 	m_automatas.push(a);
 
 	return *this;
@@ -240,8 +241,8 @@ Regex::AutomataBuilder& Regex::AutomataBuilder::addConcatenation()
 	a.addStates(top.getStates());
 	a.addStates(second.getStates());
 	a.addFinalState(topFinalState);
-	a.addSymbols(top.getAlfabet());
-	a.addSymbols(second.getAlfabet());
+	a.addSymbols(top.getLanguage());
+	a.addSymbols(second.getLanguage());
 	m_automatas.push(a);
 
 	return *this;
@@ -271,7 +272,7 @@ Regex::AutomataBuilder& Regex::AutomataBuilder::addClosure()
 	a.setStartState(start);
 	a.addStates(top.getStates());
 	a.addFinalState(end);
-	a.addSymbols(top.getAlfabet());
+	a.addSymbols(top.getLanguage());
 	m_automatas.push(a);
 
 	return *this;
