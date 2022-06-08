@@ -131,19 +131,35 @@ std::string Regex::postFix(const std::string& regex)
 
 Regex::AutomataBuilder::AutomataBuilder(const std::string& postfix)
 {	
-	for (auto& c : postfix)
+	for (int i = 0; i < postfix.size(); i++)
 	{
+		const char& c = postfix[i];
+		
 		if (!Regex::IsOperator(c))
 		{
-			addSymbol(c);
+			if (c != WORD_SPLIT)
+			{
+				addSymbol(std::string(1, c));
+				continue;
+			}
+			
+			i++;
+			std::string symbol;
+			while (postfix[i] != WORD_SPLIT)
+			{
+				symbol += postfix[i];
+				i++;
+			}
+
+			addSymbol(symbol);			
 		}
 		else
-		{
+		{			
 			switch (Regex::GetOperator(c))
 			{
 			case Regex::Operator::Star:	addClosure(); break;
 			case Regex::Operator::Dot:	addConcatenation(); break;
-			case Regex::Operator::Or:		addUnion(); break;
+			case Regex::Operator::Or:	addUnion(); break;
 			case Regex::Operator::None:
 			default: std::cerr << "Operator not supported!" << std::endl;
 			}
@@ -151,9 +167,9 @@ Regex::AutomataBuilder::AutomataBuilder(const std::string& postfix)
 	}
 }
 
-Regex::AutomataBuilder& Regex::AutomataBuilder::addSymbol(char symbol)
+Regex::AutomataBuilder& Regex::AutomataBuilder::addSymbol(const std::string& symbol)
 {	
-	auto letter = std::make_shared<Letter>(symbol);
+	auto letter = std::make_shared<Word>(symbol);
 	auto pair = m_symbols.insert(letter);
 	
 	auto from = std::make_shared<State>(std::to_string(m_stateCount++));

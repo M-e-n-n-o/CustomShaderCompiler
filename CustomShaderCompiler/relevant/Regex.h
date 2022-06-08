@@ -11,6 +11,8 @@
 #define DOT '.'
 #define OR '|'
 
+#define WORD_SPLIT '\''
+
 class Regex
 {
 private:
@@ -56,7 +58,7 @@ private:
 		AutomataBuilder(const std::string& postfix);
 		~AutomataBuilder() = default;
 
-		AutomataBuilder& addSymbol(char symbol);
+		AutomataBuilder& addSymbol(const std::string& symbol);
 		AutomataBuilder& addUnion();
 		AutomataBuilder& addConcatenation();
 		AutomataBuilder& addClosure();

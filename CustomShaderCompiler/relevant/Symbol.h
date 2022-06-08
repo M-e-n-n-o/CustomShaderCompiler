@@ -24,24 +24,25 @@ public:
 	virtual std::string toString() const = 0;
 };
 
-class Letter : public Symbol
+class Word : public Symbol
 {
 private:
-	std::string m_letter;
+	std::string m_word;
 	
 public:
-	Letter(char letter): m_letter(std::string(1, letter)) {}
+	Word(const std::string& word): m_word(word) {}
+	Word(char letter) : m_word(std::string(1, letter)) {}
 
 	bool validate(const std::string& s) const override
 	{
-		return m_letter == s;
+		return m_word == s;
 	}
 	
 	bool operator==(const Symbol& other) const override
 	{		
-		if (auto o = dynamic_cast<const Letter*>(&other); o != nullptr)
+		if (auto o = dynamic_cast<const Word*>(&other); o != nullptr)
 		{
-			return m_letter == o->m_letter;
+			return m_word == o->m_word;
 		}
 		
 		return false;
@@ -49,9 +50,9 @@ public:
 
 	bool operator<(const Symbol& other) const override
 	{
-		if (auto o = dynamic_cast<const Letter*>(&other); o != nullptr)
+		if (auto o = dynamic_cast<const Word*>(&other); o != nullptr)
 		{
-			return m_letter < o->m_letter;
+			return m_word < o->m_word;
 		}
 
 		return false;
@@ -59,6 +60,6 @@ public:
 
 	std::string toString() const override
 	{
-		return m_letter;
+		return m_word;
 	}
 };
