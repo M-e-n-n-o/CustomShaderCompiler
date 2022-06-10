@@ -64,40 +64,40 @@ public:
 	}
 };
 
-// class Epsilon : public Symbol
-// {
-// public:
-// #define EPSILON '$'
-// 	
-// 	Epsilon() = default;
-//
-// 	bool validate(const std::string& s) const override
-// 	{
-// 		return EPSILON == s;
-// 	}
-//
-// 	bool operator==(const Symbol& other) const override
-// 	{
-// 		if (auto o = dynamic_cast<const Word*>(&other); o != nullptr)
-// 		{
-// 			return m_word == o->m_word;
-// 		}
-//
-// 		return false;
-// 	}
-//
-// 	bool operator<(const Symbol& other) const override
-// 	{
-// 		if (auto o = dynamic_cast<const Word*>(&other); o != nullptr)
-// 		{
-// 			return m_word < o->m_word;
-// 		}
-//
-// 		return false;
-// 	}
-//
-// 	std::string toString() const override
-// 	{
-// 		return m_word;
-// 	}
-// };
+class Epsilon : public Symbol
+{
+public:
+#define EPSILON "$"
+	
+	Epsilon() = default;
+
+	bool validate(const std::string& s) const override
+	{
+		return EPSILON == s;
+	}
+
+	bool operator==(const Symbol& other) const override
+	{
+		if (auto o = dynamic_cast<const Epsilon*>(&other); o != nullptr)
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+	bool operator<(const Symbol& other) const override
+	{
+		if (auto o = dynamic_cast<const Epsilon*>(&other); o != nullptr)
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+	std::string toString() const override
+	{
+		return EPSILON;
+	}
+};

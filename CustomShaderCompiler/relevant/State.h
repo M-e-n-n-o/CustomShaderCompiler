@@ -5,8 +5,6 @@
 #include <iostream>
 #include "Symbol.h"
 
-#define EPSILON '$'
-
 class State;
 
 struct Transition
@@ -18,7 +16,7 @@ public:
 	
 	Transition(const std::shared_ptr<State>& from, const std::shared_ptr<Symbol>& symbol, const std::shared_ptr<State>& to) : from(from), symbol(symbol), to(to) { }
 	Transition(const std::shared_ptr<State>& fromOrTo, const std::shared_ptr<Symbol>& symbol) : Transition(fromOrTo, symbol, fromOrTo) {}
-	Transition(const std::shared_ptr<State>& from, const std::shared_ptr<State>& to) : Transition(from, std::make_shared<Word>(EPSILON), to) {}
+	Transition(const std::shared_ptr<State>& from, const std::shared_ptr<State>& to) : Transition(from, std::make_shared<Epsilon>(), to) {}
 };
 
 class State
