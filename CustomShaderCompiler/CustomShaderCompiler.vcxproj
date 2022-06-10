@@ -143,21 +143,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="relevant\Automata.cpp" />
-    <ClCompile Include="relevant\Main.cpp" />
-    <ClCompile Include="relevant\Regex.cpp" />
-    <ClCompile Include="RegexOld.cpp" />
+    <ClCompile Include="Automata.cpp" />
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Regex.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="relevant\Automata.h" />
-    <ClInclude Include="AutomataTest.h" />
-    <ClInclude Include="Example.h" />
-    <ClInclude Include="relevant\Regex.h" />
-    <ClInclude Include="RegexOld.h" />
-    <ClInclude Include="RegexTest.h" />
-    <ClInclude Include="RegexToNFA.h" />
-    <ClInclude Include="relevant\State.h" />
-    <ClInclude Include="relevant\Symbol.h" />
+    <ClInclude Include="Automata.h" />
+    <ClInclude Include="Regex.h" />
+    <ClInclude Include="State.h" />
+    <ClInclude Include="Symbol.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
