@@ -5,17 +5,17 @@
 
 int main()
 {	
-	Regex regex("'aa'.(a|b)*.b");
+	Regex regex("'appel'.(a|b)*.b");
 	
 	Automata m = regex.constructAutomata();
 	m.makeDeterministic();
 	m.printTransitions();
 
-	std::vector<std::string> input = { "aa", "b", "b" };
+	std::vector<std::string> input = { "appel", "b", "b" };
 	bool isValid = m.validate(input);
 	std::cout << isValid << std::endl;
 	
-	// isValid = m.validate("ab");
+	// bool isValid = m.validate("ab");
 	// std::cout << isValid << std::endl;
 	//
 	// isValid = m.validate("aa");
