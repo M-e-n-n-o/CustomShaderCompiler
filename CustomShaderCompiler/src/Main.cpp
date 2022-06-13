@@ -1,7 +1,6 @@
 #include <iostream>
-#include "Automata.h"
-#include "Regex.h"
-#include "Symbol.h"
+#include "shaderCompiler/automata/Automata.h"
+#include "shaderCompiler/automata/Regex.h"
 
 int main()
 {	
@@ -9,7 +8,7 @@ int main()
 	
 	Automata m = regex.constructAutomata();
 	m.makeDeterministic();
-	//m.printTransitions();
+	m.printTransitions();
 
 	std::vector<std::string> input = { "appel", "b", "b" };
 	bool isValid = m.validate(input);
@@ -27,3 +26,10 @@ int main()
 	// isValid = m.validate("abbaab");
 	// std::cout << isValid << std::endl;
 }
+
+
+/*
+ *
+ * Split the input with enters
+ * 
+ */
