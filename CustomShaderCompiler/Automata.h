@@ -31,6 +31,7 @@ public:
 	std::set<std::shared_ptr<Symbol>>& getLanguage() { return m_language; }
 
 	void makeDeterministic();
+	bool isDeterministic();
 
 	bool validate(const std::string& input);
 	bool validate(const std::vector<std::string>& input);

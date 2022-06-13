@@ -26,7 +26,7 @@ const std::string& Regex::getRegex(bool postfixNotation)
 
 Automata Regex::constructAutomata()
 {
-	return AutomataBuilder(getRegex(true)).construct();
+	return ThompsonConstruction(getRegex(true)).construct();
 }
 
 bool Regex::IsOperator(char c)
@@ -129,7 +129,7 @@ std::string Regex::postFix(const std::string& regex)
 // ------------------------------------------------------------------------------------------
 
 
-Regex::AutomataBuilder::AutomataBuilder(const std::string& postfix)
+Regex::ThompsonConstruction::ThompsonConstruction(const std::string& postfix)
 {	
 	for (int i = 0; i < postfix.size(); i++)
 	{
@@ -167,7 +167,7 @@ Regex::AutomataBuilder::AutomataBuilder(const std::string& postfix)
 	}
 }
 
-Regex::AutomataBuilder& Regex::AutomataBuilder::addSymbol(const std::string& symbol)
+Regex::ThompsonConstruction& Regex::ThompsonConstruction::addSymbol(const std::string& symbol)
 {	
 	auto letter = std::make_shared<Word>(symbol);
 	auto pair = m_symbols.insert(letter);
@@ -187,7 +187,7 @@ Regex::AutomataBuilder& Regex::AutomataBuilder::addSymbol(const std::string& sym
 	return *this;
 }
 
-Regex::AutomataBuilder& Regex::AutomataBuilder::addUnion()
+Regex::ThompsonConstruction& Regex::ThompsonConstruction::addUnion()
 {
 	Automata top = m_automatas.top();
 	m_automatas.pop();
@@ -222,7 +222,7 @@ Regex::AutomataBuilder& Regex::AutomataBuilder::addUnion()
 	return *this;
 }
 
-Regex::AutomataBuilder& Regex::AutomataBuilder::addConcatenation()
+Regex::ThompsonConstruction& Regex::ThompsonConstruction::addConcatenation()
 {
 	Automata top = m_automatas.top();
 	m_automatas.pop();
@@ -264,7 +264,7 @@ Regex::AutomataBuilder& Regex::AutomataBuilder::addConcatenation()
 	return *this;
 }
 
-Regex::AutomataBuilder& Regex::AutomataBuilder::addClosure()
+Regex::ThompsonConstruction& Regex::ThompsonConstruction::addClosure()
 {
 	Automata top = m_automatas.top();
 	m_automatas.pop();
@@ -294,7 +294,7 @@ Regex::AutomataBuilder& Regex::AutomataBuilder::addClosure()
 	return *this;
 }
 
-Automata Regex::AutomataBuilder::construct()
+Automata Regex::ThompsonConstruction::construct()
 {
 	if (m_automatas.size() > 1 || m_automatas.empty())
 	{

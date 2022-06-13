@@ -45,7 +45,7 @@ private:
 	static std::string postFix(const std::string& regex);
 
 	// Generates a NFA using the Thompson's construction
-	class AutomataBuilder
+	class ThompsonConstruction
 	{
 	private:
 		int m_stateCount = 0;
@@ -55,13 +55,13 @@ private:
 		std::stack<Automata> m_automatas;
 
 	public:
-		AutomataBuilder(const std::string& postfix);
-		~AutomataBuilder() = default;
+		ThompsonConstruction(const std::string& postfix);
+		~ThompsonConstruction() = default;
 
-		AutomataBuilder& addSymbol(const std::string& symbol);
-		AutomataBuilder& addUnion();
-		AutomataBuilder& addConcatenation();
-		AutomataBuilder& addClosure();
+		ThompsonConstruction& addSymbol(const std::string& symbol);
+		ThompsonConstruction& addUnion();
+		ThompsonConstruction& addConcatenation();
+		ThompsonConstruction& addClosure();
 
 		Automata construct();
 	};

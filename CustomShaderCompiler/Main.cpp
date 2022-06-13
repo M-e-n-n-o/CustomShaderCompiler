@@ -9,7 +9,7 @@ int main()
 	
 	Automata m = regex.constructAutomata();
 	m.makeDeterministic();
-	m.printTransitions();
+	//m.printTransitions();
 
 	std::vector<std::string> input = { "appel", "b", "b" };
 	bool isValid = m.validate(input);

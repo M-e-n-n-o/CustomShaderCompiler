@@ -143,8 +143,27 @@ bool Automata::validate(const std::shared_ptr<State>& start, const std::vector<s
 	return false;
 }
 
+bool Automata::isDeterministic()
+{
+	for (auto& state : m_states)
+	{
+		if (!state->isDeterministic(m_language))
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
 void Automata::makeDeterministic()
 {
+	if (isDeterministic())
+	{
+		std::cout << "Automata is already deterministic" << std::endl;
+		return;
+	}
+	
 	// Create the error state
 	auto errorState = std::make_shared<State>("Error");
 	for (auto& symbol : m_language)
