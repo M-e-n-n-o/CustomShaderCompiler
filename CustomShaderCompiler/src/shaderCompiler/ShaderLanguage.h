@@ -12,9 +12,9 @@ private:
 	std::vector<std::shared_ptr<ShaderConverter>> m_converters;
 
 public:
-	ShaderLanguage() = default;
+	ShaderLanguage(const std::shared_ptr<ShaderOutputLanguage>& output): m_output(output) {}
 
-	void addConverter(std::shared_ptr<ShaderConverter> converter);
+	void addConverter(const std::shared_ptr<ShaderConverter>& converter);
 
 	std::shared_ptr<ShaderOutputLanguage> convert(const std::string& input);
 };

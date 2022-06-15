@@ -32,7 +32,7 @@ public:
 
 	void makeDeterministic();
 	bool isDeterministic();
-
+	
 	bool validate(const std::string& input);
 	bool validate(const std::vector<std::string>& input);
 	
@@ -42,7 +42,7 @@ private:
 	bool validate(const std::shared_ptr<State>& start, const std::vector<std::string>& input);
 
 	std::shared_ptr<State> findState(const std::string& stateName);
-	std::shared_ptr<State> findState(const std::string& stateName, std::set<std::shared_ptr<State>>& states);
+	static std::shared_ptr<State> findState(const std::string& stateName, std::set<std::shared_ptr<State>>& states);
 	
 	// Powerset construction
 	std::set<std::shared_ptr<State>> makeDeterministic(const std::shared_ptr<State>& start, const std::shared_ptr<State>& error);

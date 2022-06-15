@@ -5,18 +5,18 @@
 
 iostream
 {
-    input:
-    vec3 vertexPos;
-    vec2 texCoord;
+    input
+    vec3 vertexPos
+    vec2 texCoord
 
-    v2f:
-    vec2 uv;
+    v2f
+    vec2 uv
 
-    output:
-    vec4 fragColor;
+    output
+    vec4 fragColor
 }
 
-uniform sampler2D tex;
+uniform sampler2D tex
 
 vertex
 {

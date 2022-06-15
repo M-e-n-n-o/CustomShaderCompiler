@@ -146,10 +146,13 @@
     <ClCompile Include="src\shaderCompiler\automata\Automata.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\shaderCompiler\automata\Regex.cpp" />
+    <ClCompile Include="src\shaderCompiler\ShaderLanguage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\shaderCompiler\automata\Automata.h" />
+    <ClInclude Include="src\shaderCompiler\GLSLShader.h" />
     <ClInclude Include="src\shaderCompiler\automata\Regex.h" />
+    <ClInclude Include="src\shaderCompiler\ShaderClass.h" />
     <ClInclude Include="src\shaderCompiler\ShaderLanguage.h" />
     <ClInclude Include="src\shaderCompiler\ShaderOutputLanguage.h" />
     <ClInclude Include="src\shaderCompiler\ShaderConverter.h" />

@@ -24,6 +24,9 @@
     <ClCompile Include="src\shaderCompiler\automata\Regex.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\shaderCompiler\ShaderLanguage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\shaderCompiler\ShaderOutputLanguage.h">
@@ -45,6 +48,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\shaderCompiler\ShaderConverter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shaderCompiler\ShaderClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shaderCompiler\GLSLShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

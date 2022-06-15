@@ -35,13 +35,13 @@ public:
 	}
 
 	bool isDeterministic(const std::set<std::shared_ptr<Symbol>>& alfabet)
-	{
+	{		
 		for (auto& c : alfabet)
 		{			
 			bool contains = false;
 			
 			for (const auto& transition : transitions)
-			{
+			{				
 				if (transition->symbol == c)
 				{
 					contains = true;

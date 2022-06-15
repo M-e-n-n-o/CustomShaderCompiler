@@ -320,7 +320,7 @@ std::set<std::shared_ptr<State>> Automata::makeDeterministic(const std::shared_p
 		for (auto& state : startStates)
 		{			
 			for (auto& transition : state->transitions)
-			{
+			{				
 				if (transition->symbol == symbol)
 				{
 					statesPerSymbol.second.insert(transition->to);

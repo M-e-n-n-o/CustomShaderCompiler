@@ -9,14 +9,12 @@ enum class ShaderSourceType
 {
 	Vertex,
 	Fragment,
-
-	Output
 };
 
 struct ShaderSource
 {
-	std::string code;
 	ShaderSourceType type;
+	std::string code;
 };
 
 
@@ -42,6 +40,7 @@ enum class VariableDataType
 
 struct GlobalShaderVariable
 {
+	std::string name;
 	VariableType type;
 	VariableDataType dataType;
 };
@@ -54,13 +53,11 @@ struct GlobalShaderVariable
 class ShaderOutputLanguage
 {
 public:
+	ShaderOutputLanguage() = default;
 	virtual ~ShaderOutputLanguage() = default;
-
-	virtual void addGlobalVariable() = 0;
-	virtual void addShaderSource() = 0;
-
-	virtual std::vector<GlobalShaderVariable> getVariables() = 0;
-	virtual std::vector<ShaderSource> getShaderSources() = 0;
+	
+	virtual void addGlobalVariable(const GlobalShaderVariable& variable) = 0;
+	virtual void addShaderSource(const ShaderSource& source) = 0;
 
 	virtual std::vector<ShaderSource> constructOutput() = 0;
 };
