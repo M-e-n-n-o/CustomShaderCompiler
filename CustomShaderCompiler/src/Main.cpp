@@ -9,12 +9,13 @@ int main()
 {
 	// This is for testing purposes of the Automata and Regex systems
 	Regex regex("a.(a|b)*.b");
+	// Regex regex("'appel'.(a|b)*.b");
 	
 	Automata m = regex.constructAutomata();
 	m.makeDeterministic();
 	m.printTransitions();
 	
-	std::vector<std::string> input = { "a", "a", "b" };
+	std::vector<std::string> input = { "appel", "a", "b" };
 	bool isValid = m.validate(input);
 	std::cout << isValid << std::endl;
 	
